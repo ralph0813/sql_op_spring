@@ -1,0 +1,9 @@
+datasource:
+  driver: com.mysql.jdbc.Driver
+  url: jdbc:mysql://192.168.50.40:3306/dbs?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+  username: root
+  password: 813929MySQL
+
+#mybatis:
+#  mapper-locations: classpath*:me/stephenj/sqlope/dao/*.xml
+#  type-aliases-package: me.stephenj.sqlope.dao
