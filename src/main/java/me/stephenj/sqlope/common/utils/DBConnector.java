@@ -3,8 +3,11 @@ package me.stephenj.sqlope.common.utils;
 import com.mysql.jdbc.Connection;
 import me.stephenj.sqlope.common.api.CommonResult;
 import me.stephenj.sqlope.config.DataSourceHelper;
+import me.stephenj.sqlope.mbg.mapper.DbMapper;
+import me.stephenj.sqlope.mbg.model.Db;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,8 @@ import java.sql.Statement;
 @Service
 public class DBConnector {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceHelper.class);
+    @Autowired
+    private DbMapper dbMapper;
 
     @Value("${datasource.driver}")
     private String driver;
@@ -46,5 +51,10 @@ public class DBConnector {
         }
 
         return 1;
+    }
+
+    public int execute(int dbId, String sqlStatement) {
+        Db db = dbMapper.selectByPrimaryKey(dbId);
+        return execute(db.getName(), sqlStatement);
     }
 }
