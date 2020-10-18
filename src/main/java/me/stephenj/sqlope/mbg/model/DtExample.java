@@ -353,6 +353,66 @@ public class DtExample {
             addCriterion("fk not between", value1, value2, "fk");
             return (Criteria) this;
         }
+
+        public Criteria andPkIsNull() {
+            addCriterion("pk is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkIsNotNull() {
+            addCriterion("pk is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkEqualTo(Boolean value) {
+            addCriterion("pk =", value, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkNotEqualTo(Boolean value) {
+            addCriterion("pk <>", value, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkGreaterThan(Boolean value) {
+            addCriterion("pk >", value, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("pk >=", value, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkLessThan(Boolean value) {
+            addCriterion("pk <", value, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkLessThanOrEqualTo(Boolean value) {
+            addCriterion("pk <=", value, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkIn(List<Boolean> values) {
+            addCriterion("pk in", values, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkNotIn(List<Boolean> values) {
+            addCriterion("pk not in", values, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkBetween(Boolean value1, Boolean value2) {
+            addCriterion("pk between", value1, value2, "pk");
+            return (Criteria) this;
+        }
+
+        public Criteria andPkNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("pk not between", value1, value2, "pk");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

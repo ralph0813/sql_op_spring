@@ -16,6 +16,9 @@ public class Dt implements Serializable {
     @ApiModelProperty(value = "外键")
     private Integer fk;
 
+    @ApiModelProperty(value = "是否为主键")
+    private Boolean pk;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -50,6 +53,14 @@ public class Dt implements Serializable {
         this.fk = fk;
     }
 
+    public Boolean getPk() {
+        return pk;
+    }
+
+    public void setPk(Boolean pk) {
+        this.pk = pk;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -60,6 +71,7 @@ public class Dt implements Serializable {
         sb.append(", tbid=").append(tbid);
         sb.append(", name=").append(name);
         sb.append(", fk=").append(fk);
+        sb.append(", pk=").append(pk);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
