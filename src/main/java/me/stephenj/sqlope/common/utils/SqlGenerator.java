@@ -80,4 +80,12 @@ public class SqlGenerator {
         result.append(") ").append(tail);
         return result.toString();
     }
+
+    public String dropTb(String tbName) {
+        return String.format("DROP TABLE `%s`;", tbName);
+    }
+
+    public String renameTb(String oldName, String newName) {
+        return String.format("RENAME TABLE `%s` TO `%s`;", oldName, newName);
+    }
 }

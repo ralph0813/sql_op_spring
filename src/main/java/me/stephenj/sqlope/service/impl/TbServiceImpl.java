@@ -1,16 +1,16 @@
 package me.stephenj.sqlope.service.impl;
 
+import me.stephenj.sqlope.Exception.ForeignKeyExistException;
 import me.stephenj.sqlope.Exception.TableExistException;
+import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlGenerator;
 import me.stephenj.sqlope.common.utils.SqlRegistrator;
 import me.stephenj.sqlope.domain.TbDomain;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
+import me.stephenj.sqlope.mbg.mapper.DtMapper;
 import me.stephenj.sqlope.mbg.mapper.TbMapper;
-import me.stephenj.sqlope.mbg.model.Db;
-import me.stephenj.sqlope.mbg.model.DbExample;
-import me.stephenj.sqlope.mbg.model.Tb;
-import me.stephenj.sqlope.mbg.model.TbExample;
+import me.stephenj.sqlope.mbg.model.*;
 import me.stephenj.sqlope.service.TbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @ClassName TbServiceImpl.java
@@ -44,6 +45,9 @@ public class TbServiceImpl implements TbService {
 
     @Autowired
     private DbMapper dbMapper;
+
+    @Autowired
+    private DtMapper dtMapper;
 
     @Autowired
     private DBConnector dbConnector;
@@ -103,4 +107,52 @@ public class TbServiceImpl implements TbService {
 //        }
         return 1;
     }
+
+    //删除table需要查看其他data有没有外键指向该table中的data
+    @Override
+    public int dropTb(int tbId) throws TableNotExistException, ForeignKeyExistException {
+        Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbId));
+        if (!tbOptional.isPresent()){
+            throw new TableNotExistException();
+        }
+        DtExample dtExample = new DtExample();
+        dtExample.createCriteria().andTbidEqualTo(tbId);
+        List<Dt> dts = dtMapper.selectByExample(dtExample);
+        for (Dt dt: dts) {
+            int fk = dt.getId();
+            DtExample dtExample_fk = new DtExample();
+            dtExample_fk.createCriteria().andFkEqualTo(fk);
+            List<Dt> fks = dtMapper.selectByExample(dtExample_fk);
+            if (!fks.isEmpty()) {
+                Dt dt_fk = fks.get(0);
+                Tb tb_fk = tbMapper.selectByPrimaryKey(dt_fk.getTbid());
+                throw new ForeignKeyExistException(tb_fk.getName(), dt_fk.getName());
+            }
+        }
+        String dropTbSql = sqlGenerator.dropTb(tbOptional.get().getName());
+        int state = dbConnector.execute(tbOptional.get().getDbid(), dropTbSql);
+        if (state == 1) {
+            dtMapper.deleteByExample(dtExample);
+            tbMapper.deleteByPrimaryKey(tbId);
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public int renameTb(int tbId, String newName) throws TableNotExistException {
+        Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbId));
+        if (!tbOptional.isPresent()) {
+            throw new TableNotExistException();
+        }
+        String renameTbSql = sqlGenerator.renameTb(tbOptional.get().getName(), newName);
+        int state = dbConnector.execute(tbOptional.get().getDbid(), renameTbSql);
+        if (state == 1) {
+            tbOptional.get().setName(newName);
+            tbMapper.updateByPrimaryKeySelective(tbOptional.get());
+        }
+        return 0;
+    }
+
+
 }

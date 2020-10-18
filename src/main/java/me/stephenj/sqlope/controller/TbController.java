@@ -3,7 +3,9 @@ package me.stephenj.sqlope.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import me.stephenj.sqlope.Exception.ForeignKeyExistException;
 import me.stephenj.sqlope.Exception.TableExistException;
+import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.api.CommonResult;
 import me.stephenj.sqlope.domain.TbDomain;
 import me.stephenj.sqlope.mbg.model.Tb;
@@ -47,6 +49,7 @@ public class TbController {
         try {
             count = tbService.createTb(tbDomain);
         } catch (TableExistException e) {
+            LOGGER.debug("create table failed:{}", tbDomain.getName());
             return CommonResult.failed("该表已经存在");
         }
         if (count == 0) {
@@ -61,6 +64,59 @@ public class TbController {
         } else {
             LOGGER.debug("create table success:{}", tbDomain.getName());
             return CommonResult.success(tbDomain.getName());
+        }
+    }
+
+    @ApiOperation("删除数据表")
+    @RequestMapping(value = "/drop", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult dropTb(@RequestParam(value = "tbId")
+                               @ApiParam("数据表序号") int tbId) {
+        int count = 0;
+        try {
+            count = tbService.dropTb(tbId);
+        } catch (TableNotExistException e) {
+            LOGGER.debug("drop table failed:{}", tbId);
+            return CommonResult.failed("该表不存在");
+        } catch (ForeignKeyExistException e) {
+            LOGGER.debug("drop table failed:{}", tbId);
+            return CommonResult.failed(String.format("表`%s`存在字段`%s`指向本表的外键", e.getTbName(), e.getDtName()));
+        }
+        if (count == 0) {
+            LOGGER.debug("drop table failed:{}", tbId);
+            return CommonResult.failed("删表失败，语句执行异常");
+        } else if (count == 1) {
+            LOGGER.debug("drop table success:{}", tbId);
+            return CommonResult.success(tbId);
+        } else {
+            LOGGER.debug("drop table failed:{}", tbId);
+            return CommonResult.failed("删表失败，其他原因");
+        }
+    }
+
+    @ApiOperation("重命名数据表")
+    @RequestMapping(value = "/rename", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult renameTb(@RequestParam(value = "tbId")
+                                 @ApiParam("数据表序号") int tbId,
+                                 @RequestParam(value = "newName")
+                                 @ApiParam("数据表新名") String newName) {
+        int count = 0;
+        try {
+            count = tbService.renameTb(tbId, newName);
+        } catch (TableNotExistException e) {
+            LOGGER.debug("rename table failed:{}", tbId);
+            return CommonResult.failed("该表不存在");
+        }
+        if (count == 0) {
+            LOGGER.debug("rename table failed:{}", tbId);
+            return CommonResult.failed("重命名表失败，语句执行异常");
+        } else if (count == 1) {
+            LOGGER.debug("rename table success:{}", tbId);
+            return CommonResult.success(tbId);
+        } else {
+            LOGGER.debug("rename table failed:{}", tbId);
+            return CommonResult.failed("删表失败，其他原因");
         }
     }
 }

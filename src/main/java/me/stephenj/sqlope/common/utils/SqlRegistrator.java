@@ -48,6 +48,9 @@ public class SqlRegistrator {
             Dt dt = new Dt();
             dt.setTbid(tbId);
             dt.setName(dtDomain.getName());
+            if (dt.getName().equals(tbDomain.getPrimaryKey())) {
+                dt.setPk(true);
+            }
             Optional<List<FkDomain>> fksOp = Optional.ofNullable(tbDomain.getFks());
             fksOp.ifPresent(fks -> {
                 fks.stream()
@@ -64,20 +67,9 @@ public class SqlRegistrator {
                         });
             });
             dtMapper.insert(dt);
-//            tbDomain.getFks().stream()
-//                    .filter(fk -> fk.getDt().equals(dt.getName()))
-//                    .findFirst()
-//                    .ifPresent(fk -> {
-//                        TbExample tbExample_tg = new TbExample();
-//                        tbExample_tg.createCriteria().andDbidEqualTo(db.getId()).andNameEqualTo(fk.getTgTb());
-//                        int tgTbId = tbMapper.selectByExample(tbExample_tg).get(0).getId();
-//                        DtExample dtExample_tg = new DtExample();
-//                        dtExample_tg.createCriteria().andTbidEqualTo(tgTbId).andNameEqualTo(fk.getTgDt());
-//                        int tgDtId = dtMapper.selectByExample(dtExample_tg).get(0).getId();
-//                        dt.setFk(tgDtId);
-//                    });
         }
 
         return 1;
     }
+
 }
