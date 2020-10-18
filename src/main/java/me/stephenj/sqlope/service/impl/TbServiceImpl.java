@@ -150,6 +150,7 @@ public class TbServiceImpl implements TbService {
         if (state == 1) {
             tbOptional.get().setName(newName);
             tbMapper.updateByPrimaryKeySelective(tbOptional.get());
+            return 1;
         }
         return 0;
     }
