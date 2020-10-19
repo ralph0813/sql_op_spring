@@ -69,7 +69,7 @@ public class SqlGenerator {
                     DtExample dtExample = new DtExample();
                     dtExample.createCriteria().andNameEqualTo(fkDomain.getTgDt());
                     if (dtMapper.selectByExample(dtExample).get(0).getTbid() == tb.getId()) {
-                        result.append(String.format(", CONSTRAINT %s_%s_%s_fk FOREIGN KEY (`id`) REFERENCES `tb` (`id`)",
+                        result.append(String.format(", CONSTRAINT %s_%s_%s_fk ",
                                 tbDomain.getName(), fkDomain.getTgTb(), fkDomain.getTgDt()));
                         result.append(String.format("FOREIGN KEY (`%s`) REFERENCES `%s` (`%s`)",
                                 fkDomain.getDt(), fkDomain.getTgTb(), fkDomain.getTgDt()));
