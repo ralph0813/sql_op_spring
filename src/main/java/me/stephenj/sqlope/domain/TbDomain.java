@@ -3,11 +3,19 @@ package me.stephenj.sqlope.domain;
 import java.util.List;
 
 public class TbDomain {
+    private int dbId;
     private String dbName;
     private String name;
     private List<DtDomain> dts;
     private String primaryKey;
-    private List<FkDomain> fks;
+
+    public int getDbId() {
+        return dbId;
+    }
+
+    public void setDbId(int dbId) {
+        this.dbId = dbId;
+    }
 
     public String getDbName() {
         return dbName;
@@ -41,11 +49,4 @@ public class TbDomain {
         this.primaryKey = primaryKey;
     }
 
-    public List<FkDomain> getFks() {
-        return fks;
-    }
-
-    public void setFks(List<FkDomain> fks) {
-        this.fks = fks;
-    }
 }
