@@ -16,8 +16,11 @@ public class DtTemp {
 
     private String tbName;
 
+    private int id;
 
     private String name;
+
+    private String oldName;
 
     private String type;
 
@@ -30,6 +33,22 @@ public class DtTemp {
     private int tgDtId;
 
     private String tgDt;
+
+    public int getId() {
+        return id;
+    }
+
+    public String getOldName() {
+        return oldName;
+    }
+
+    public void setOldName(String oldName) {
+        this.oldName = oldName;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

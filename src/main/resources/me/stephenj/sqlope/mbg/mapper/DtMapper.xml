@@ -3,7 +3,7 @@
 <mapper namespace="me.stephenj.sqlope.mbg.mapper.DtMapper">
   <resultMap id="BaseResultMap" type="me.stephenj.sqlope.mbg.model.Dt">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="tbid" jdbcType="INTEGER" property="tbid" />
+    <result column="tb_id" jdbcType="INTEGER" property="tbId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="fk" jdbcType="INTEGER" property="fk" />
     <result column="pk" jdbcType="BIT" property="pk" />
@@ -67,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, tbid, name, fk, pk
+    id, tb_id, name, fk, pk
   </sql>
   <select id="selectByExample" parameterType="me.stephenj.sqlope.mbg.model.DtExample" resultMap="BaseResultMap">
     select
@@ -103,9 +103,9 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into dt (tbid, name, fk, 
+    insert into dt (tb_id, name, fk, 
       pk)
-    values (#{tbid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{fk,jdbcType=INTEGER}, 
+    values (#{tbId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{fk,jdbcType=INTEGER}, 
       #{pk,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="me.stephenj.sqlope.mbg.model.Dt">
@@ -114,8 +114,8 @@
     </selectKey>
     insert into dt
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="tbid != null">
-        tbid,
+      <if test="tbId != null">
+        tb_id,
       </if>
       <if test="name != null">
         name,
@@ -128,8 +128,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="tbid != null">
-        #{tbid,jdbcType=INTEGER},
+      <if test="tbId != null">
+        #{tbId,jdbcType=INTEGER},
       </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
@@ -154,8 +154,8 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.tbid != null">
-        tbid = #{record.tbid,jdbcType=INTEGER},
+      <if test="record.tbId != null">
+        tb_id = #{record.tbId,jdbcType=INTEGER},
       </if>
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
@@ -174,7 +174,7 @@
   <update id="updateByExample" parameterType="map">
     update dt
     set id = #{record.id,jdbcType=INTEGER},
-      tbid = #{record.tbid,jdbcType=INTEGER},
+      tb_id = #{record.tbId,jdbcType=INTEGER},
       name = #{record.name,jdbcType=VARCHAR},
       fk = #{record.fk,jdbcType=INTEGER},
       pk = #{record.pk,jdbcType=BIT}
@@ -185,8 +185,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="me.stephenj.sqlope.mbg.model.Dt">
     update dt
     <set>
-      <if test="tbid != null">
-        tbid = #{tbid,jdbcType=INTEGER},
+      <if test="tbId != null">
+        tb_id = #{tbId,jdbcType=INTEGER},
       </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -202,7 +202,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="me.stephenj.sqlope.mbg.model.Dt">
     update dt
-    set tbid = #{tbid,jdbcType=INTEGER},
+    set tb_id = #{tbId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
       fk = #{fk,jdbcType=INTEGER},
       pk = #{pk,jdbcType=BIT}

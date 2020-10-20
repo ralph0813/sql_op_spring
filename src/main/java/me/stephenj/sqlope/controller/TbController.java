@@ -50,7 +50,7 @@ public class TbController {
             count = tbService.createTb(tbDomain);
         } catch (TableExistException e) {
             LOGGER.debug("create table failed:{}", tbDomain.getName());
-            return CommonResult.failed("该表已经存在");
+            return CommonResult.failed(e.getMessage());
         }
         if (count == 0) {
             LOGGER.debug("create table failed:{}", tbDomain.getName());
@@ -75,12 +75,9 @@ public class TbController {
         int count = 0;
         try {
             count = tbService.dropTb(tbId);
-        } catch (TableNotExistException e) {
+        } catch (TableNotExistException | ForeignKeyExistException e) {
             LOGGER.debug("drop table failed:{}", tbId);
-            return CommonResult.failed("该表不存在");
-        } catch (ForeignKeyExistException e) {
-            LOGGER.debug("drop table failed:{}", tbId);
-            return CommonResult.failed(String.format("表`%s`存在字段`%s`指向本表的外键", e.getTbName(), e.getDtName()));
+            return CommonResult.failed(e.getMessage());
         }
         if (count == 0) {
             LOGGER.debug("drop table failed:{}", tbId);
@@ -106,7 +103,7 @@ public class TbController {
             count = tbService.renameTb(tbId, newName);
         } catch (TableNotExistException e) {
             LOGGER.debug("rename table failed:{}", tbId);
-            return CommonResult.failed("该表不存在");
+            return CommonResult.failed(e.getMessage());
         }
         if (count == 0) {
             LOGGER.debug("rename table failed:{}", tbId);

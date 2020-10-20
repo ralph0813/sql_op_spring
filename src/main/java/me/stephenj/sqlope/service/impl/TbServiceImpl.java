@@ -59,7 +59,7 @@ public class TbServiceImpl implements TbService {
     @Override
     public List<Tb> listTbs(int dbId) {
         TbExample tbExample = new TbExample();
-        tbExample.createCriteria().andDbidEqualTo(dbId);
+        tbExample.createCriteria().andDbIdEqualTo(dbId);
         return tbMapper.selectByExample(tbExample);
     }
 
@@ -113,10 +113,10 @@ public class TbServiceImpl implements TbService {
     public int dropTb(int tbId) throws TableNotExistException, ForeignKeyExistException {
         Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbId));
         if (!tbOptional.isPresent()){
-            throw new TableNotExistException();
+            throw new TableNotExistException("该表不存在");
         }
         DtExample dtExample = new DtExample();
-        dtExample.createCriteria().andTbidEqualTo(tbId);
+        dtExample.createCriteria().andTbIdEqualTo(tbId);
         List<Dt> dts = dtMapper.selectByExample(dtExample);
         for (Dt dt: dts) {
             int fk = dt.getId();
@@ -125,12 +125,12 @@ public class TbServiceImpl implements TbService {
             List<Dt> fks = dtMapper.selectByExample(dtExample_fk);
             if (!fks.isEmpty()) {
                 Dt dt_fk = fks.get(0);
-                Tb tb_fk = tbMapper.selectByPrimaryKey(dt_fk.getTbid());
+                Tb tb_fk = tbMapper.selectByPrimaryKey(dt_fk.getTbId());
                 throw new ForeignKeyExistException(tb_fk.getName(), dt_fk.getName());
             }
         }
         String dropTbSql = sqlGenerator.dropTb(tbOptional.get().getName());
-        int state = dbConnector.execute(tbOptional.get().getDbid(), dropTbSql);
+        int state = dbConnector.execute(tbOptional.get().getDbId(), dropTbSql);
         if (state == 1) {
             dtMapper.deleteByExample(dtExample);
             tbMapper.deleteByPrimaryKey(tbId);
@@ -143,10 +143,10 @@ public class TbServiceImpl implements TbService {
     public int renameTb(int tbId, String newName) throws TableNotExistException {
         Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbId));
         if (!tbOptional.isPresent()) {
-            throw new TableNotExistException();
+            throw new TableNotExistException("该表不存在");
         }
         String renameTbSql = sqlGenerator.renameTb(tbOptional.get().getName(), newName);
-        int state = dbConnector.execute(tbOptional.get().getDbid(), renameTbSql);
+        int state = dbConnector.execute(tbOptional.get().getDbId(), renameTbSql);
         if (state == 1) {
             tbOptional.get().setName(newName);
             tbMapper.updateByPrimaryKeySelective(tbOptional.get());

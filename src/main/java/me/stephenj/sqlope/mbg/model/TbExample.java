@@ -164,63 +164,63 @@ public class TbExample {
             return (Criteria) this;
         }
 
-        public Criteria andDbidIsNull() {
-            addCriterion("dbid is null");
+        public Criteria andDbIdIsNull() {
+            addCriterion("db_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andDbidIsNotNull() {
-            addCriterion("dbid is not null");
+        public Criteria andDbIdIsNotNull() {
+            addCriterion("db_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDbidEqualTo(Integer value) {
-            addCriterion("dbid =", value, "dbid");
+        public Criteria andDbIdEqualTo(Integer value) {
+            addCriterion("db_id =", value, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidNotEqualTo(Integer value) {
-            addCriterion("dbid <>", value, "dbid");
+        public Criteria andDbIdNotEqualTo(Integer value) {
+            addCriterion("db_id <>", value, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidGreaterThan(Integer value) {
-            addCriterion("dbid >", value, "dbid");
+        public Criteria andDbIdGreaterThan(Integer value) {
+            addCriterion("db_id >", value, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidGreaterThanOrEqualTo(Integer value) {
-            addCriterion("dbid >=", value, "dbid");
+        public Criteria andDbIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("db_id >=", value, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidLessThan(Integer value) {
-            addCriterion("dbid <", value, "dbid");
+        public Criteria andDbIdLessThan(Integer value) {
+            addCriterion("db_id <", value, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidLessThanOrEqualTo(Integer value) {
-            addCriterion("dbid <=", value, "dbid");
+        public Criteria andDbIdLessThanOrEqualTo(Integer value) {
+            addCriterion("db_id <=", value, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidIn(List<Integer> values) {
-            addCriterion("dbid in", values, "dbid");
+        public Criteria andDbIdIn(List<Integer> values) {
+            addCriterion("db_id in", values, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidNotIn(List<Integer> values) {
-            addCriterion("dbid not in", values, "dbid");
+        public Criteria andDbIdNotIn(List<Integer> values) {
+            addCriterion("db_id not in", values, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidBetween(Integer value1, Integer value2) {
-            addCriterion("dbid between", value1, value2, "dbid");
+        public Criteria andDbIdBetween(Integer value1, Integer value2) {
+            addCriterion("db_id between", value1, value2, "dbId");
             return (Criteria) this;
         }
 
-        public Criteria andDbidNotBetween(Integer value1, Integer value2) {
-            addCriterion("dbid not between", value1, value2, "dbid");
+        public Criteria andDbIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("db_id not between", value1, value2, "dbId");
             return (Criteria) this;
         }
 

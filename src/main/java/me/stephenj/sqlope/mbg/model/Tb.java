@@ -8,7 +8,7 @@ public class Tb implements Serializable {
     private Integer id;
 
     @ApiModelProperty(value = "数据库序号")
-    private Integer dbid;
+    private Integer dbId;
 
     @ApiModelProperty(value = "数据表名")
     private String name;
@@ -26,12 +26,12 @@ public class Tb implements Serializable {
         this.id = id;
     }
 
-    public Integer getDbid() {
-        return dbid;
+    public Integer getDbId() {
+        return dbId;
     }
 
-    public void setDbid(Integer dbid) {
-        this.dbid = dbid;
+    public void setDbId(Integer dbId) {
+        this.dbId = dbId;
     }
 
     public String getName() {
@@ -57,7 +57,7 @@ public class Tb implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", dbid=").append(dbid);
+        sb.append(", dbId=").append(dbId);
         sb.append(", name=").append(name);
         sb.append(", fk=").append(fk);
         sb.append(", serialVersionUID=").append(serialVersionUID);
