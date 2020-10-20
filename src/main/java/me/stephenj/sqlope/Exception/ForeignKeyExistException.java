@@ -1,30 +1,17 @@
 package me.stephenj.sqlope.Exception;
 
 public class ForeignKeyExistException extends Exception{
-    private String tbName;
-    private String dtName;
+
 
     public ForeignKeyExistException() {
     }
 
+    public ForeignKeyExistException(String message) {
+        super(message);
+    }
+
     public ForeignKeyExistException(String tbName, String dtName) {
-        this.tbName = tbName;
-        this.dtName = dtName;
+        super(String.format("存在外键由`%s`表的`%s`字段", tbName, dtName));
     }
 
-    public String getTbName() {
-        return tbName;
-    }
-
-    public void setTbName(String tbName) {
-        this.tbName = tbName;
-    }
-
-    public String getDtName() {
-        return dtName;
-    }
-
-    public void setDtName(String dtName) {
-        this.dtName = dtName;
-    }
 }
