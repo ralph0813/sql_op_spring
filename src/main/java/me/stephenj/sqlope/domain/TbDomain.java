@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 public class TbDomain {
+    
     @ApiModelProperty(value = "数据库序号")
     private int dbId;
 

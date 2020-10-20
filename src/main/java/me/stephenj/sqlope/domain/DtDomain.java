@@ -3,6 +3,7 @@ package me.stephenj.sqlope.domain;
 import io.swagger.annotations.ApiModelProperty;
 
 public class DtDomain {
+
     @ApiModelProperty(value = "数据列名称")
     private String name;
 
