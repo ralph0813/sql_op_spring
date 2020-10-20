@@ -1,12 +1,23 @@
 package me.stephenj.sqlope.domain;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 public class TbDomain {
+    @ApiModelProperty(value = "数据库序号")
     private int dbId;
+
+    @ApiModelProperty(value = "数据库名称")
     private String dbName;
+
+    @ApiModelProperty(value = "数据表名称")
     private String name;
+
+    @ApiModelProperty(value = "数据列列表")
     private List<DtDomain> dts;
+
+    @ApiModelProperty(value = "数据表主键")
     private String primaryKey;
 
     public int getDbId() {

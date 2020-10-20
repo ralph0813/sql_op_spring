@@ -1,11 +1,24 @@
 package me.stephenj.sqlope.domain;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class DtDomain {
+    @ApiModelProperty(value = "数据列名称")
     private String name;
+
+    @ApiModelProperty(value = "数据列类型")
     private String type;
+
+    @ApiModelProperty(value = "true->自增;false->不自增")
     private boolean autoIncrement;
+
+    @ApiModelProperty(value = "true->有外键;false->无外键")
     private boolean foreignkey;
+
+    @ApiModelProperty(value = "外键指向的数据表")
     private String tgTb;
+
+    @ApiModelProperty(value = "外键指向的数据列")
     private String tgDt;
 
     public boolean isForeignkey() {
