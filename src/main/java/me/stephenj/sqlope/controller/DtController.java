@@ -3,17 +3,17 @@ package me.stephenj.sqlope.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import me.stephenj.sqlope.Exception.ForeignKeyExistException;
-import me.stephenj.sqlope.Exception.TableExistException;
+import me.stephenj.sqlope.Exception.DataNotCompleteException;
+import me.stephenj.sqlope.Exception.DataNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.api.CommonResult;
-import me.stephenj.sqlope.domain.TbDomain;
+import me.stephenj.sqlope.domain.DtParam;
+import me.stephenj.sqlope.domain.DtTemp;
 import me.stephenj.sqlope.mbg.model.Dt;
-import me.stephenj.sqlope.mbg.model.Tb;
 import me.stephenj.sqlope.service.DtService;
-import me.stephenj.sqlope.service.TbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +49,28 @@ public class DtController {
             return CommonResult.failed("该表不存在");
         }
         return CommonResult.success(dts);
+    }
+
+    @ApiOperation("创建数据列")
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult createDt(@RequestBody DtParam dtParam) {
+        int count = 0;
+        DtTemp dtTemp = new DtTemp();
+        BeanUtils.copyProperties(dtTemp, dtParam);
+        BeanUtils.copyProperties(dtTemp, dtParam.getDtDomain());
+        try {
+            count = dtService.createDt(dtTemp);
+        } catch (TableNotExistException | DataNotCompleteException | DataNotExistException e) {
+            LOGGER.debug("create data failed:{}", dtParam.getTbId());
+            return CommonResult.failed(e.getMessage());
+        }
+        if (count == 1) {
+            LOGGER.debug("create data success:{}", dtTemp.getName());
+            return CommonResult.success(dtParam);
+        } else {
+            LOGGER.debug("create data failed:{}", dtTemp.getName());
+            return CommonResult.failed("创建数据列失败，其他原因");
+        }
     }
 }

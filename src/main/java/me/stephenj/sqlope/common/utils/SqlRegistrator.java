@@ -2,6 +2,7 @@ package me.stephenj.sqlope.common.utils;
 
 import me.stephenj.sqlope.Exception.TableExistException;
 import me.stephenj.sqlope.domain.DtDomain;
+import me.stephenj.sqlope.domain.DtTemp;
 import me.stephenj.sqlope.domain.TbDomain;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
@@ -56,4 +57,14 @@ public class SqlRegistrator {
         return 1;
     }
 
+    public int createDt(DtTemp dtTemp) {
+        Dt dt = new Dt();
+        dt.setTbid(dtTemp.getTbId());
+        dt.setName(dtTemp.getName());
+        if (dtTemp.isForeignkey()) {
+            dt.setFk(dtTemp.getTgDtId());
+        }
+        dtMapper.insert(dt);
+        return 1;
+    }
 }

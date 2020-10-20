@@ -2,6 +2,8 @@ package me.stephenj.sqlope.common.utils;
 
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.domain.DtDomain;
+import me.stephenj.sqlope.domain.DtParam;
+import me.stephenj.sqlope.domain.DtTemp;
 import me.stephenj.sqlope.domain.TbDomain;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
@@ -87,5 +89,20 @@ public class SqlGenerator {
 
     public String renameTb(String oldName, String newName) {
         return String.format("RENAME TABLE `%s` TO `%s`;", oldName, newName);
+    }
+
+    public String createDt(DtTemp dtTemp) {
+        return String.format("ALTER TABLE `%s` ADD COLUMN `%s` %s;",
+                dtTemp.getTbName(), dtTemp.getName(), dtTemp.getType());
+    }
+
+    //FOREIGN KEY (`nid`) REFERENCES `mytb1` (`id`);
+    public String createFk(DtTemp dtTemp) {
+        StringBuilder result = new StringBuilder(String.format("ALTER TABLE `%s` ADD CONSTRAINT ", dtTemp.getTbName()));
+        result.append(String.format("%s_%s_%s_fk ",
+                dtTemp.getTbName(), dtTemp.getTgTb(), dtTemp.getTgDt()));
+        result.append(String.format("FOREIGN KEY (`%s`) REFERENCES `%s` (`%s`);",
+                dtTemp.getName(), dtTemp.getTgTb(), dtTemp.getTgDt()));
+        return result.toString();
     }
 }
