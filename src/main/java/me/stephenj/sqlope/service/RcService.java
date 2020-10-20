@@ -17,4 +17,5 @@ import java.util.List;
  */
 public interface RcService {
     List<List<ResultCell>> listRcs(TbTemp tbTemp) throws TableNotExistException, DatabaseNotExistException, SQLException;
+
 }
