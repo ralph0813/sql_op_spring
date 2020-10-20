@@ -61,7 +61,7 @@ public class DtController {
         BeanUtils.copyProperties(dtParam.getDtDomain(), dtTemp);
         try {
             count = dtService.createDt(dtTemp);
-        } catch (TableNotExistException | DataNotCompleteException | DataNotExistException e) {
+        } catch (TableNotExistException | DataNotCompleteException | DataNotExistException | DataExistException e) {
             LOGGER.debug("create data failed:{}", dtParam.getTbId());
             return CommonResult.failed(e.getMessage());
         }

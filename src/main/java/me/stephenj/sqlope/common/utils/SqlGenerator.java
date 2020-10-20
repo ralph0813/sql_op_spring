@@ -46,16 +46,16 @@ public class SqlGenerator {
                 if (dtDomain.isForeignkey()) {
                     dtDomain.setForeignkey(false);
                     TbExample tbExample = new TbExample();
-                    tbExample.createCriteria().andDbidEqualTo(tbDomain.getDbId()).andNameEqualTo(dtDomain.getTgTb());
+                    tbExample.createCriteria().andDbIdEqualTo(tbDomain.getDbId()).andNameEqualTo(dtDomain.getTgTb());
                     List<Tb> tbs_fk = tbMapper.selectByExample(tbExample);
                     if (!tbs_fk.isEmpty()) {
                         Tb tb_fk = tbs_fk.get(0);
                         DtExample dtExample = new DtExample();
-                        dtExample.createCriteria().andTbidEqualTo(tb_fk.getId()).andNameEqualTo(dtDomain.getTgDt());
+                        dtExample.createCriteria().andTbIdEqualTo(tb_fk.getId()).andNameEqualTo(dtDomain.getTgDt());
                         List<Dt> dts_fk = dtMapper.selectByExample(dtExample);
                         if (!dts_fk.isEmpty()) {
-                            foreignKeyStr.append(String.format(", CONSTRAINT %s_%s_%s_fk ",
-                                    tbDomain.getName(), dtDomain.getTgTb(), dtDomain.getTgDt()));
+                            foreignKeyStr.append(String.format(", CONSTRAINT `%s_%s_fk` ",
+                                    tbDomain.getName(), dtDomain.getName()));
                             foreignKeyStr.append(String.format("FOREIGN KEY (`%s`) REFERENCES `%s` (`%s`)",
                                     dtDomain.getName(), dtDomain.getTgTb(), dtDomain.getTgDt()));
                             dtDomain.setForeignkey(true);
@@ -99,8 +99,8 @@ public class SqlGenerator {
     //FOREIGN KEY (`nid`) REFERENCES `mytb1` (`id`);
     public String createFk(DtTemp dtTemp) {
         StringBuilder result = new StringBuilder(String.format("ALTER TABLE `%s` ADD CONSTRAINT ", dtTemp.getTbName()));
-        result.append(String.format("%s_%s_%s_fk ",
-                dtTemp.getTbName(), dtTemp.getTgTb(), dtTemp.getTgDt()));
+        result.append(String.format("`%s_%s_fk` ",
+                dtTemp.getTbName(), dtTemp.getName()));
         result.append(String.format("FOREIGN KEY (`%s`) REFERENCES `%s` (`%s`);",
                 dtTemp.getName(), dtTemp.getTgTb(), dtTemp.getTgDt()));
         return result.toString();

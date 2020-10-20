@@ -45,10 +45,10 @@ public class SqlRegistrator {
             }
             if (dtDomain.isForeignkey()) {
                 TbExample tbExample_tg = new TbExample();
-                tbExample_tg.createCriteria().andDbidEqualTo(db.getId()).andNameEqualTo(dtDomain.getTgTb());
+                tbExample_tg.createCriteria().andDbIdEqualTo(db.getId()).andNameEqualTo(dtDomain.getTgTb());
                 int tgTbId = tbMapper.selectByExample(tbExample_tg).get(0).getId();
                 DtExample dtExample_tg = new DtExample();
-                dtExample_tg.createCriteria().andTbidEqualTo(tgTbId).andNameEqualTo(dtDomain.getTgDt());
+                dtExample_tg.createCriteria().andTbIdEqualTo(tgTbId).andNameEqualTo(dtDomain.getTgDt());
                 int tgDtId = dtMapper.selectByExample(dtExample_tg).get(0).getId();
                 dt.setFk(tgDtId);
             }
@@ -59,7 +59,7 @@ public class SqlRegistrator {
 
     public int createDt(DtTemp dtTemp) {
         Dt dt = new Dt();
-        dt.setTbid(dtTemp.getTbId());
+        dt.setTbId(dtTemp.getTbId());
         dt.setName(dtTemp.getName());
         if (dtTemp.isForeignkey()) {
             dt.setFk(dtTemp.getTgDtId());

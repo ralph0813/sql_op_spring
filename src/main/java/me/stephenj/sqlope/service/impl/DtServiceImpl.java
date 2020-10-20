@@ -46,7 +46,7 @@ public class DtServiceImpl implements DtService {
     @Override
     public List<Dt> listDts(int tbId) throws TableNotExistException {
         DtExample dtExample = new DtExample();
-        dtExample.createCriteria().andTbidEqualTo(tbId);
+        dtExample.createCriteria().andTbIdEqualTo(tbId);
         List<Dt> dts = dtMapper.selectByExample(dtExample);
         if (dts.isEmpty()) {
             throw new TableNotExistException();
@@ -55,7 +55,7 @@ public class DtServiceImpl implements DtService {
     }
 
     @Override
-    public int createDt(DtTemp dtTemp) throws TableNotExistException, DataNotCompleteException, DataNotExistException {
+    public int createDt(DtTemp dtTemp) throws TableNotExistException, DataNotCompleteException, DataNotExistException, DataExistException {
         if (sqlCheck.checkCreateDt(dtTemp)) {
             String createDtSql = sqlGenerator.createDt(dtTemp);
             dbConnector.execute(dtTemp.getDbName(), createDtSql);
