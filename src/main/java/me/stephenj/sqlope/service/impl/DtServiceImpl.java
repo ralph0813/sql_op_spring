@@ -7,7 +7,6 @@ import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlCheck;
 import me.stephenj.sqlope.common.utils.SqlGenerator;
 import me.stephenj.sqlope.common.utils.SqlRegistrator;
-import me.stephenj.sqlope.controller.DbController;
 import me.stephenj.sqlope.domain.DtTemp;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
@@ -57,7 +56,7 @@ public class DtServiceImpl implements DtService {
 
     @Override
     public int createDt(DtTemp dtTemp) throws TableNotExistException, DataNotCompleteException, DataNotExistException {
-        if (sqlCheck.checkDtTemp(dtTemp)) {
+        if (sqlCheck.checkCreateDt(dtTemp)) {
             String createDtSql = sqlGenerator.createDt(dtTemp);
             dbConnector.execute(dtTemp.getDbName(), createDtSql);
             if (dtTemp.isForeignkey()) {

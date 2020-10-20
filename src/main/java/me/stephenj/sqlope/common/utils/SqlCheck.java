@@ -34,7 +34,7 @@ public class SqlCheck {
     @Autowired
     private DbMapper dbMapper;
 
-    public boolean checkDtTemp(DtTemp dtTemp) throws TableNotExistException, DataNotCompleteException, DataNotExistException {
+    public boolean checkCreateDt(DtTemp dtTemp) throws TableNotExistException, DataNotCompleteException, DataNotExistException {
         Optional<Tb> tbOp = Optional.ofNullable(tbMapper.selectByPrimaryKey(dtTemp.getTbId()));
         if (!tbOp.isPresent()) {
             throw new TableNotExistException("该表不存在");
