@@ -2,6 +2,7 @@ package me.stephenj.sqlope.service;
 
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
+import me.stephenj.sqlope.domain.RcParam;
 import me.stephenj.sqlope.domain.ResultCell;
 import me.stephenj.sqlope.domain.TbTemp;
 
@@ -18,4 +19,5 @@ import java.util.List;
 public interface RcService {
     List<List<ResultCell>> listRcs(TbTemp tbTemp) throws TableNotExistException, DatabaseNotExistException, SQLException;
 
+    int addRc(RcParam rcParam) throws DatabaseNotExistException, TableNotExistException;
 }

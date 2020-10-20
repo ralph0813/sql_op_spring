@@ -1,10 +1,16 @@
 package me.stephenj.sqlope.domain;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class ResultCell {
+
+    @ApiModelProperty(value = "列名")
     private String name;
 
+    @ApiModelProperty(value = "值")
     private String value;
 
+    @ApiModelProperty(value = "数据类型")
     private String type;
 
     public ResultCell() {

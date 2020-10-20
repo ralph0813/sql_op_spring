@@ -107,7 +107,7 @@ public class SqlCheck {
         return true;
     }
 
-    public boolean checkListRc(TbTemp tbTemp) throws TableNotExistException, DatabaseNotExistException {
+    public boolean checkRc(TbTemp tbTemp) throws TableNotExistException, DatabaseNotExistException {
         Optional<Db> dbOptional = Optional.ofNullable(dbMapper.selectByPrimaryKey(tbTemp.getDbId()));
         if (!dbOptional.isPresent()) {
             throw new DatabaseNotExistException("该数据库不存在");

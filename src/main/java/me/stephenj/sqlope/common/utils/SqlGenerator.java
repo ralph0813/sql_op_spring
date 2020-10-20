@@ -1,6 +1,5 @@
 package me.stephenj.sqlope.common.utils;
 
-import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
@@ -121,5 +120,26 @@ public class SqlGenerator {
     public String listRc(TbTemp tbTemp) {
         return String.format("SELECT * FROM `%s`",
                 tbTemp.getName());
+    }
+
+    public String addRc(RcParam rcParam) {
+        StringBuilder result = new StringBuilder(String.format("INSERT INTO `%s` (",
+                rcParam.getName()));
+        StringBuilder names = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        List<ResultCell> row = rcParam.getRow();
+        for (ResultCell resultCell: row) {
+            names.append(String.format("`%s`", resultCell.getName()));
+            values.append(String.format("'%s'", resultCell.getValue()));
+            if (row.indexOf(resultCell) < row.size() - 1) {
+                names.append(", ");
+                values.append(", ");
+            }
+        }
+        result.append(names);
+        result.append(") VALUE (");
+        result.append(values);
+        result.append(");");
+        return result.toString();
     }
 }
