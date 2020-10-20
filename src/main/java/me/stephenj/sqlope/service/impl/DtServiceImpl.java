@@ -1,8 +1,6 @@
 package me.stephenj.sqlope.service.impl;
 
-import me.stephenj.sqlope.Exception.DataNotCompleteException;
-import me.stephenj.sqlope.Exception.DataNotExistException;
-import me.stephenj.sqlope.Exception.TableNotExistException;
+import me.stephenj.sqlope.Exception.*;
 import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlCheck;
 import me.stephenj.sqlope.common.utils.SqlGenerator;
@@ -67,4 +65,31 @@ public class DtServiceImpl implements DtService {
         }
         return 0;
     }
+
+    @Override
+    public int dropDt(DtTemp dtTemp) throws DataNotExistException, ForeignKeyExistException, TableEmptyException {
+        if (sqlCheck.checkDropDt(dtTemp)) {
+            String dropDtSql = sqlGenerator.dropDt(dtTemp);
+            dbConnector.execute(dtTemp.getDbName(), dropDtSql);
+            return sqlRegistrator.dropDt(dtTemp);
+        }
+        return 0;
+    }
+
+    @Override
+    public int modifyDt(DtTemp dtTemp) throws DataNotExistException, DataNotCompleteException, TableNotExistException, DataExistException {
+        if (sqlCheck.checkModifyDt(dtTemp)) {
+            String modifyDtSql = sqlGenerator.modifyDt(dtTemp);
+            dbConnector.execute(dtTemp.getDbName(), modifyDtSql);
+            if (dtTemp.isForeignkey()) {
+                String dropFkSql = sqlGenerator.deleteFk(dtTemp);
+                dbConnector.execute(dtTemp.getDbName(), dropFkSql);
+                String createFkSql = sqlGenerator.createFk(dtTemp);
+                dbConnector.execute(dtTemp.getDbName(), createFkSql);
+            }
+            return sqlRegistrator.modifyDt(dtTemp);
+        }
+        return 0;
+    }
+
 }

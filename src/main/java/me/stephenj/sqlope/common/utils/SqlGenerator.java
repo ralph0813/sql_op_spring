@@ -105,4 +105,19 @@ public class SqlGenerator {
                 dtTemp.getName(), dtTemp.getTgTb(), dtTemp.getTgDt()));
         return result.toString();
     }
+
+    public String dropDt(DtTemp dtTemp) {
+        return String.format("ALTER TABLE `%s` DROP COLUMN `%s`;",
+                dtTemp.getTbName(), dtTemp.getName());
+    }
+
+    public String modifyDt(DtTemp dtTemp) {
+        return String.format("ALTER TABLE `%s` CHANGE `%s` `%s` %s;",
+                dtTemp.getTbName(), dtTemp.getOldName(), dtTemp.getName(), dtTemp.getType());
+    }
+
+    public String deleteFk(DtTemp dtTemp) {
+        return String.format("ALTER TABLE `%s` DROP FOREIGN KEY `%s_%s_fk`;",
+                dtTemp.getTbName(), dtTemp.getTbName(), dtTemp.getOldName());
+    }
 }

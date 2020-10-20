@@ -25,12 +25,12 @@ public class SqlRegistrator {
         dbExample.createCriteria().andNameEqualTo(tbDomain.getDbName());
         Db db = dbMapper.selectByExample(dbExample).get(0);
         Tb tb = new Tb();
-        tb.setDbid(db.getId());
+        tb.setDbId(db.getId());
         tb.setName(tbDomain.getName());
         TbExample tbExample = new TbExample();
-        tbExample.createCriteria().andNameEqualTo(tbDomain.getName()).andDbidEqualTo(db.getId());
+        tbExample.createCriteria().andNameEqualTo(tbDomain.getName()).andDbIdEqualTo(db.getId());
         if (!tbMapper.selectByExample(tbExample).isEmpty()){
-            throw new TableExistException();
+            throw new TableExistException("该数据表已经存在");
         }
         tb.setFk((int) tbDomain.getDts().stream().filter(DtDomain::isForeignkey).count());
         tbMapper.insertSelective(tb);
@@ -38,7 +38,7 @@ public class SqlRegistrator {
 
         for (DtDomain dtDomain : tbDomain.getDts()) {
             Dt dt = new Dt();
-            dt.setTbid(tbId);
+            dt.setTbId(tbId);
             dt.setName(dtDomain.getName());
             if (dt.getName().equals(tbDomain.getPrimaryKey())) {
                 dt.setPk(true);
@@ -65,6 +65,21 @@ public class SqlRegistrator {
             dt.setFk(dtTemp.getTgDtId());
         }
         dtMapper.insert(dt);
+        return 1;
+    }
+
+    public int dropDt(DtTemp dtTemp) {
+        dtMapper.deleteByPrimaryKey(dtTemp.getId());
+        return 1;
+    }
+
+    public int modifyDt(DtTemp dtTemp) {
+        Dt dt = dtMapper.selectByPrimaryKey(dtTemp.getId());
+        dt.setName(dtTemp.getName());
+        if (dtTemp.isForeignkey()) {
+            dt.setFk(dtTemp.getTgDtId());
+        }
+        dtMapper.updateByPrimaryKeySelective(dt);
         return 1;
     }
 }

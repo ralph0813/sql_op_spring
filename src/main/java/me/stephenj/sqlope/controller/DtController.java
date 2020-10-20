@@ -3,9 +3,7 @@ package me.stephenj.sqlope.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import me.stephenj.sqlope.Exception.DataNotCompleteException;
-import me.stephenj.sqlope.Exception.DataNotExistException;
-import me.stephenj.sqlope.Exception.TableNotExistException;
+import me.stephenj.sqlope.Exception.*;
 import me.stephenj.sqlope.common.api.CommonResult;
 import me.stephenj.sqlope.domain.DtParam;
 import me.stephenj.sqlope.domain.DtTemp;
@@ -71,6 +69,55 @@ public class DtController {
         } else {
             LOGGER.debug("create data failed:{}", dtTemp.getName());
             return CommonResult.failed("创建数据列失败，其他原因");
+        }
+    }
+
+    @ApiOperation("删除数据列")
+    @RequestMapping(value = "/drop", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult dropDt(@RequestParam(value = "dtId")
+                               @ApiParam("数据列序号") int dtId) {
+        int count = 0;
+        DtTemp dtTemp = new DtTemp();
+        dtTemp.setId(dtId);
+        try {
+            count = dtService.dropDt(dtTemp);
+        } catch (DataNotExistException | ForeignKeyExistException | TableEmptyException e) {
+            LOGGER.debug("drop data failed:{}", dtId);
+            return CommonResult.failed(e.getMessage());
+        }
+        if (count == 1) {
+            LOGGER.debug("drop data success:{}", dtId);
+            return CommonResult.success(dtId);
+        } else {
+            LOGGER.debug("drop data failed:{}", dtId);
+            return CommonResult.failed("删除数据列失败，其他原因");
+        }
+    }
+
+    @ApiOperation("修改数据列")
+    @RequestMapping(value = "/modify", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult modifyDt(@RequestBody DtParam dtParam,
+                                 @RequestParam(value = "dtId")
+                                 @ApiParam("数据列序号") int dtId) {
+        int count = 0;
+        DtTemp dtTemp = new DtTemp();
+        BeanUtils.copyProperties(dtParam, dtTemp);
+        BeanUtils.copyProperties(dtParam.getDtDomain(), dtTemp);
+        dtTemp.setId(dtId);
+        try{
+            count = dtService.modifyDt(dtTemp);
+        } catch (TableNotExistException | DataNotExistException | DataNotCompleteException | DataExistException e) {
+            LOGGER.debug("modify data failed:{}", dtId);
+            return CommonResult.failed(e.getMessage());
+        }
+        if (count == 1) {
+            LOGGER.debug("modify data success:{}", dtId);
+            return CommonResult.success(dtId);
+        } else {
+            LOGGER.debug("modify data failed:{}", dtId);
+            return CommonResult.failed("修改数据列失败，其他原因");
         }
     }
 }
