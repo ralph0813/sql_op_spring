@@ -57,8 +57,8 @@ public class DtController {
     public CommonResult createDt(@RequestBody DtParam dtParam) {
         int count = 0;
         DtTemp dtTemp = new DtTemp();
-        BeanUtils.copyProperties(dtTemp, dtParam);
-        BeanUtils.copyProperties(dtTemp, dtParam.getDtDomain());
+        BeanUtils.copyProperties(dtParam, dtTemp);
+        BeanUtils.copyProperties(dtParam.getDtDomain(), dtTemp);
         try {
             count = dtService.createDt(dtTemp);
         } catch (TableNotExistException | DataNotCompleteException | DataNotExistException e) {
