@@ -2,13 +2,12 @@ package me.stephenj.sqlope.common.utils;
 
 import me.stephenj.sqlope.Exception.*;
 import me.stephenj.sqlope.domain.DtTemp;
+import me.stephenj.sqlope.domain.TbDomain;
+import me.stephenj.sqlope.domain.TbTemp;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
 import me.stephenj.sqlope.mbg.mapper.TbMapper;
-import me.stephenj.sqlope.mbg.model.Dt;
-import me.stephenj.sqlope.mbg.model.DtExample;
-import me.stephenj.sqlope.mbg.model.Tb;
-import me.stephenj.sqlope.mbg.model.TbExample;
+import me.stephenj.sqlope.mbg.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,7 +107,17 @@ public class SqlCheck {
         return true;
     }
 
-
+    public boolean checkListRc(TbTemp tbTemp) throws TableNotExistException, DatabaseNotExistException {
+        Optional<Db> dbOptional = Optional.ofNullable(dbMapper.selectByPrimaryKey(tbTemp.getDbId()));
+        if (!dbOptional.isPresent()) {
+            throw new DatabaseNotExistException("该数据库不存在");
+        }
+        Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbTemp.getId()));
+        if (!tbOptional.isPresent()) {
+            throw new TableNotExistException("该数据表不存在");
+        }
+        return true;
+    }
 
 
 

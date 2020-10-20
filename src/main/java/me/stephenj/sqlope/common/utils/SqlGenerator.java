@@ -1,10 +1,7 @@
 package me.stephenj.sqlope.common.utils;
 
 import me.stephenj.sqlope.Exception.TableNotExistException;
-import me.stephenj.sqlope.domain.DtDomain;
-import me.stephenj.sqlope.domain.DtParam;
-import me.stephenj.sqlope.domain.DtTemp;
-import me.stephenj.sqlope.domain.TbDomain;
+import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
 import me.stephenj.sqlope.mbg.mapper.TbMapper;
@@ -119,5 +116,10 @@ public class SqlGenerator {
     public String deleteFk(DtTemp dtTemp) {
         return String.format("ALTER TABLE `%s` DROP FOREIGN KEY `%s_%s_fk`;",
                 dtTemp.getTbName(), dtTemp.getTbName(), dtTemp.getOldName());
+    }
+
+    public String listRc(TbTemp tbTemp) {
+        return String.format("SELECT * FROM `%s`",
+                tbTemp.getName());
     }
 }
