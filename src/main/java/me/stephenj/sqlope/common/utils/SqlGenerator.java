@@ -122,12 +122,12 @@ public class SqlGenerator {
                 tbTemp.getName());
     }
 
-    public String addRc(RcParam rcParam) {
+    public String addRc(RcAddParam rcAddParam) {
         StringBuilder result = new StringBuilder(String.format("INSERT INTO `%s` (",
-                rcParam.getName()));
+                rcAddParam.getName()));
         StringBuilder names = new StringBuilder();
         StringBuilder values = new StringBuilder();
-        List<ResultCell> row = rcParam.getRow();
+        List<ResultCell> row = rcAddParam.getRow();
         for (ResultCell resultCell: row) {
             names.append(String.format("`%s`", resultCell.getName()));
             values.append(String.format("'%s'", resultCell.getValue()));
@@ -140,6 +140,48 @@ public class SqlGenerator {
         result.append(") VALUE (");
         result.append(values);
         result.append(");");
+        return result.toString();
+    }
+
+    public String updateRc(RcUpdateParam rcUpdateParam) {
+        StringBuilder result = new StringBuilder(String.format("UPDATE `%s` SET ",
+                rcUpdateParam.getName()));
+        StringBuilder values = new StringBuilder();
+        StringBuilder conditionValues = new StringBuilder();
+        List<ResultCell> row = rcUpdateParam.getRow();
+        for (ResultCell resultCell: row) {
+            values.append(String.format("`%s` = '%s'", resultCell.getName(), resultCell.getValue()));
+            if (row.indexOf(resultCell) < row.size() - 1) {
+                values.append(", ");
+            }
+        }
+        List<ResultCell> conditions = rcUpdateParam.getConditions();
+        for (ResultCell resultCell: conditions) {
+            conditionValues.append(String.format("`%s` = '%s'", resultCell.getName(), resultCell.getValue()));
+            if (conditions.indexOf(resultCell) < conditions.size() - 1) {
+                conditionValues.append(" AND ");
+            }
+        }
+        result.append(values);
+        result.append(" WHERE ");
+        result.append(conditionValues);
+        result.append(";");
+        return result.toString();
+    }
+
+    public String deleteRc(RcDeleteParam rcDeleteParam) {
+        StringBuilder result = new StringBuilder(String.format("DELETE FROM `%s` WHERE ",
+                rcDeleteParam.getName()));
+        StringBuilder conditionValues = new StringBuilder();
+        List<ResultCell> conditions = rcDeleteParam.getConditions();
+        for (ResultCell resultCell: conditions) {
+            conditionValues.append(String.format("`%s` = '%s'", resultCell.getName(), resultCell.getValue()));
+            if (conditions.indexOf(resultCell) < conditions.size() - 1) {
+                conditionValues.append(" AND ");
+            }
+        }
+        result.append(conditionValues);
+        result.append(";");
         return result.toString();
     }
 }

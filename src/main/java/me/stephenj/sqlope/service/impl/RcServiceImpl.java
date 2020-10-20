@@ -5,9 +5,7 @@ import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlCheck;
 import me.stephenj.sqlope.common.utils.SqlGenerator;
-import me.stephenj.sqlope.domain.RcParam;
-import me.stephenj.sqlope.domain.ResultCell;
-import me.stephenj.sqlope.domain.TbTemp;
+import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.service.RcService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +39,34 @@ public class RcServiceImpl implements RcService {
     }
 
     @Override
-    public int addRc(RcParam rcParam) throws DatabaseNotExistException, TableNotExistException {
+    public int addRc(RcAddParam rcAddParam) throws DatabaseNotExistException, TableNotExistException {
         TbTemp tbTemp = new TbTemp();
-        BeanUtils.copyProperties(rcParam, tbTemp);
+        BeanUtils.copyProperties(rcAddParam, tbTemp);
         if (sqlCheck.checkRc(tbTemp)) {
-            String addRcSql = sqlGenerator.addRc(rcParam);
-            return dbConnector.execute(rcParam.getDbName(), addRcSql);
+            String addRcSql = sqlGenerator.addRc(rcAddParam);
+            return dbConnector.execute(rcAddParam.getDbName(), addRcSql);
+        }
+        return 0;
+    }
+
+    @Override
+    public int updateRc(RcUpdateParam rcUpdateParam) throws DatabaseNotExistException, TableNotExistException {
+        TbTemp tbTemp = new TbTemp();
+        BeanUtils.copyProperties(rcUpdateParam, tbTemp);
+        if (sqlCheck.checkRc(tbTemp)) {
+            String updateRcSql = sqlGenerator.updateRc(rcUpdateParam);
+            return dbConnector.execute(rcUpdateParam.getDbName(), updateRcSql);
+        }
+        return 0;
+    }
+
+    @Override
+    public int deleteRc(RcDeleteParam rcDeleteParam) throws DatabaseNotExistException, TableNotExistException {
+        TbTemp tbTemp = new TbTemp();
+        BeanUtils.copyProperties(rcDeleteParam, tbTemp);
+        if (sqlCheck.checkRc(tbTemp)) {
+            String deleteRcSql = sqlGenerator.deleteRc(rcDeleteParam);
+            return dbConnector.execute(rcDeleteParam.getDbName(), deleteRcSql);
         }
         return 0;
     }

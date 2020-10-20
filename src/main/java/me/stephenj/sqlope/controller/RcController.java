@@ -5,14 +5,10 @@ import io.swagger.annotations.ApiOperation;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.api.CommonResult;
-import me.stephenj.sqlope.domain.RcParam;
-import me.stephenj.sqlope.domain.ResultCell;
-import me.stephenj.sqlope.domain.TbParam;
-import me.stephenj.sqlope.domain.TbTemp;
+import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.service.RcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +35,7 @@ public class RcController {
     @ApiOperation("获取数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<List<List<ResultCell>>> getRcList(@RequestBody TbParam tbParam) {
-        TbTemp tbTemp = new TbTemp();
-        BeanUtils.copyProperties(tbParam, tbTemp);
+    public CommonResult<List<List<ResultCell>>> getRcList(@RequestBody TbTemp tbTemp) {
         List<List<ResultCell>> columns = null;
         try {
              columns = rcService.listRcs(tbTemp);
@@ -55,20 +49,61 @@ public class RcController {
     @ApiOperation("添加数据")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult addRc(@RequestBody RcParam rcParam) {
+    public CommonResult addRc(@RequestBody RcAddParam rcAddParam) {
         int count = 0;
         try {
-            count = rcService.addRc(rcParam);
+            count = rcService.addRc(rcAddParam);
         } catch (DatabaseNotExistException | TableNotExistException e) {
-            LOGGER.debug("add data failed:{}", rcParam);
+            LOGGER.debug("add data failed:{}", rcAddParam);
             CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
-            LOGGER.debug("add record success:{}", rcParam);
-            return CommonResult.success(rcParam);
+            LOGGER.debug("add record success:{}", rcAddParam);
+            return CommonResult.success(rcAddParam);
         } else {
-            LOGGER.debug("add record failed:{}", rcParam);
+            LOGGER.debug("add record failed:{}", rcAddParam);
             return CommonResult.failed("添加记录失败，其他原因");
         }
     }
+
+    @ApiOperation("更新数据")
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateRc(@RequestBody RcUpdateParam rcUpdateParam) {
+        int count = 0;
+        try {
+            count = rcService.updateRc(rcUpdateParam);
+        } catch (DatabaseNotExistException | TableNotExistException e) {
+            LOGGER.debug("update record failed:{}", rcUpdateParam);
+            CommonResult.failed(e.getMessage());
+        }
+        if (count == 1) {
+            LOGGER.debug("update record success:{}", rcUpdateParam);
+            return CommonResult.success(rcUpdateParam);
+        } else {
+            LOGGER.debug("update record failed:{}", rcUpdateParam);
+            return CommonResult.failed("更新记录失败，其他原因");
+        }
+    }
+
+    @ApiOperation("删除数据")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult deleteRc(@RequestBody RcDeleteParam rcDeleteParam) {
+        int count = 0;
+        try {
+            count = rcService.deleteRc(rcDeleteParam);
+        } catch (TableNotExistException | DatabaseNotExistException e) {
+            LOGGER.debug("delete record failed:{}", rcDeleteParam);
+            CommonResult.failed(e.getMessage());
+        }
+        if (count == 1) {
+            LOGGER.debug("delete record success:{}", rcDeleteParam);
+            return CommonResult.success(rcDeleteParam);
+        } else {
+            LOGGER.debug("delete record failed:{}", rcDeleteParam);
+            return CommonResult.failed("删除记录失败，其他原因");
+        }
+    }
+
 }

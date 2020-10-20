@@ -2,6 +2,7 @@ package me.stephenj.sqlope.common.utils;
 
 import me.stephenj.sqlope.Exception.*;
 import me.stephenj.sqlope.domain.DtTemp;
+import me.stephenj.sqlope.domain.RcUpdateParam;
 import me.stephenj.sqlope.domain.TbDomain;
 import me.stephenj.sqlope.domain.TbTemp;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
@@ -118,6 +119,7 @@ public class SqlCheck {
         }
         return true;
     }
+
 
 
 

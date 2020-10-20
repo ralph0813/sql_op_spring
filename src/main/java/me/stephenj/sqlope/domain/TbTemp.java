@@ -3,12 +3,17 @@ package me.stephenj.sqlope.domain;
 import io.swagger.annotations.ApiModelProperty;
 
 public class TbTemp {
+
+    @ApiModelProperty(value = "数据库序号")
     private int dbId;
 
+    @ApiModelProperty(value = "数据库名称")
     private String dbName;
 
+    @ApiModelProperty(value = "数据表名称")
     private String name;
 
+    @ApiModelProperty(value = "数据表序号")
     private int id;
 
     public int getDbId() {
