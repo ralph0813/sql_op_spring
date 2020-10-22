@@ -1,5 +1,6 @@
 package me.stephenj.sqlope.service.impl;
 
+import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.utils.DBConnector;
@@ -30,10 +31,12 @@ public class RcServiceImpl implements RcService {
     private SqlGenerator sqlGenerator;
 
     @Override
-    public List<List<ResultCell>> listRcs(TbTemp tbTemp) throws TableNotExistException, DatabaseNotExistException {
-        if (sqlCheck.checkRc(tbTemp)) {
-            String listRcsSql = sqlGenerator.listRc(tbTemp);
-            return dbConnector.query(tbTemp.getDbName(), listRcsSql);
+    public List<List<ResultCell>> listRcs(RcListParam rcListParam) throws TableNotExistException, DatabaseNotExistException, ConditionsException {
+        TbTemp tbTemp = new TbTemp();
+        BeanUtils.copyProperties(rcListParam, tbTemp);
+        if (sqlCheck.checkRc(tbTemp) && sqlCheck.checkConditions(rcListParam.getConditions())) {
+            String listRcsSql = sqlGenerator.listRc(rcListParam);
+            return dbConnector.query(rcListParam.getDbName(), listRcsSql);
         }
         return null;
     }

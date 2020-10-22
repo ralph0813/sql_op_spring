@@ -48,5 +48,11 @@
     <table tableName="dt">
       <generatedKey column="id" sqlStatement="MySql" identity="true"/>
     </table>
+    <table tableName="admin">
+      <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+    </table>
+    <table tableName="logs">
+      <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+    </table>
   </context>
 </generatorConfiguration>

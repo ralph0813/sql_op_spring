@@ -1,10 +1,7 @@
 package me.stephenj.sqlope.common.utils;
 
 import me.stephenj.sqlope.Exception.*;
-import me.stephenj.sqlope.domain.DtTemp;
-import me.stephenj.sqlope.domain.RcUpdateParam;
-import me.stephenj.sqlope.domain.TbDomain;
-import me.stephenj.sqlope.domain.TbTemp;
+import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
 import me.stephenj.sqlope.mbg.mapper.TbMapper;
@@ -13,6 +10,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,6 +115,19 @@ public class SqlCheck {
         Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbTemp.getId()));
         if (!tbOptional.isPresent()) {
             throw new TableNotExistException("该数据表不存在");
+        }
+        return true;
+    }
+
+    public boolean checkConditions(List<ConditionCell> conditionCells) throws ConditionsException {
+        String[] symbols = {"=", "!=", ">", "<", "<=", ">="};
+        for (ConditionCell conditionCell: conditionCells) {
+            if (conditionCell.getLogic() < 0 || conditionCell.getLogic() > 1) {
+                throw new ConditionsException("逻辑'AND'或者'OR'错误");
+            }
+            if (!Arrays.asList(symbols).contains(conditionCell.getSymbol())) {
+                throw new ConditionsException("符号错误");
+            }
         }
         return true;
     }

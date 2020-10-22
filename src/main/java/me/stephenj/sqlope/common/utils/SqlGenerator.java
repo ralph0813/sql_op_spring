@@ -117,9 +117,24 @@ public class SqlGenerator {
                 dtTemp.getTbName(), dtTemp.getTbName(), dtTemp.getOldName());
     }
 
-    public String listRc(TbTemp tbTemp) {
-        return String.format("SELECT * FROM `%s`",
-                tbTemp.getName());
+    public String listRc(RcListParam rcListParam) {
+        List<ConditionCell> conditions = rcListParam.getConditions();
+        StringBuilder condition = new StringBuilder(" WHERE '1' = '1'");
+        if (!conditions.isEmpty()) {
+            for (ConditionCell conditionCell: conditions) {
+                StringBuilder oneCase = new StringBuilder();
+                if (conditionCell.getLogic() == 0) {
+                    oneCase.append(" AND");
+                } else {
+                    oneCase.append(" OR");
+                }
+                oneCase.append(String.format(" `%s` %s '%s'",
+                        conditionCell.getName(), conditionCell.getSymbol(), conditionCell.getValue()));
+                condition.append(oneCase);
+            }
+        }
+        return String.format("SELECT * FROM `%s`" + condition.toString(),
+                rcListParam.getName());
     }
 
     public String addRc(RcAddParam rcAddParam) {

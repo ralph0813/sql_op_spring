@@ -2,6 +2,7 @@ package me.stephenj.sqlope.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.api.CommonResult;
@@ -35,12 +36,12 @@ public class RcController {
     @ApiOperation("获取数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<List<List<ResultCell>>> getRcList(@RequestBody TbTemp tbTemp) {
+    public CommonResult<List<List<ResultCell>>> getRcList(@RequestBody RcListParam rcListParam) {
         List<List<ResultCell>> columns = null;
         try {
-             columns = rcService.listRcs(tbTemp);
-        } catch (DatabaseNotExistException | TableNotExistException | SQLException e) {
-            LOGGER.debug("list record failed:{}", tbTemp);
+             columns = rcService.listRcs(rcListParam);
+        } catch (DatabaseNotExistException | TableNotExistException | SQLException | ConditionsException e) {
+            LOGGER.debug("list record failed:{}", rcListParam);
             CommonResult.failed(e.getMessage());
         }
         return CommonResult.success(columns);
