@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import me.stephenj.sqlope.Exception.*;
 import me.stephenj.sqlope.common.api.CommonResult;
+import me.stephenj.sqlope.common.utils.LogGenerator;
 import me.stephenj.sqlope.domain.DtParam;
 import me.stephenj.sqlope.domain.DtTemp;
 import me.stephenj.sqlope.mbg.model.Dt;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -33,12 +35,14 @@ public class DtController {
 
     @Autowired
     private DtService dtService;
-
+    @Autowired
+    private LogGenerator logGenerator;
     @ApiOperation("获取数据列")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<Dt>> getDtList(@RequestParam(value = "tbId")
-                                            @ApiParam("数据表序号") int tbId) {
+                                            @ApiParam("数据表序号") int tbId,
+                                            HttpServletRequest request) {
         List<Dt> dts;
         try {
             dts = dtService.listDts(tbId);
@@ -46,13 +50,14 @@ public class DtController {
             LOGGER.debug("list data failed:{}", tbId);
             return CommonResult.failed("该表不存在");
         }
+        logGenerator.log(request, "获取数据列名");
         return CommonResult.success(dts);
     }
 
     @ApiOperation("创建数据列")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult createDt(@RequestBody DtParam dtParam) {
+    public CommonResult createDt(@RequestBody DtParam dtParam, HttpServletRequest request) {
         int count = 0;
         DtTemp dtTemp = new DtTemp();
         BeanUtils.copyProperties(dtParam, dtTemp);
@@ -64,6 +69,7 @@ public class DtController {
             return CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
+            logGenerator.log(request, "创建数据列: " + dtParam.getDtDomain().getName());
             LOGGER.debug("create data success:{}", dtTemp.getName());
             return CommonResult.success(dtParam);
         } else {
@@ -76,7 +82,8 @@ public class DtController {
     @RequestMapping(value = "/drop", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult dropDt(@RequestParam(value = "dtId")
-                               @ApiParam("数据列序号") int dtId) {
+                               @ApiParam("数据列序号") int dtId,
+                               HttpServletRequest request) {
         int count = 0;
         DtTemp dtTemp = new DtTemp();
         dtTemp.setId(dtId);
@@ -87,6 +94,7 @@ public class DtController {
             return CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
+            logGenerator.log(request, "删除数据列: " + dtId);
             LOGGER.debug("drop data success:{}", dtId);
             return CommonResult.success(dtId);
         } else {
@@ -100,7 +108,8 @@ public class DtController {
     @ResponseBody
     public CommonResult modifyDt(@RequestBody DtParam dtParam,
                                  @RequestParam(value = "dtId")
-                                 @ApiParam("数据列序号") int dtId) {
+                                 @ApiParam("数据列序号") int dtId,
+                                 HttpServletRequest request) {
         int count = 0;
         DtTemp dtTemp = new DtTemp();
         BeanUtils.copyProperties(dtParam, dtTemp);
@@ -113,6 +122,7 @@ public class DtController {
             return CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
+            logGenerator.log(request, "修改数据列: " + dtId + ": " + dtParam.getDtDomain().getName());
             LOGGER.debug("modify data success:{}", dtId);
             return CommonResult.success(dtId);
         } else {

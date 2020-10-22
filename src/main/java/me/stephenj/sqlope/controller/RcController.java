@@ -6,14 +6,17 @@ import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.api.CommonResult;
+import me.stephenj.sqlope.common.utils.LogGenerator;
 import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.service.RcService;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -32,11 +35,13 @@ public class RcController {
 
     @Autowired
     private RcService rcService;
-
+    @Autowired
+    private LogGenerator logGenerator;
     @ApiOperation("获取数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<List<List<ResultCell>>> getRcList(@RequestBody RcListParam rcListParam) {
+    public CommonResult<List<List<ResultCell>>> getRcList(@RequestBody RcListParam rcListParam,
+                                                          HttpServletRequest request) {
         List<List<ResultCell>> columns = null;
         try {
              columns = rcService.listRcs(rcListParam);
@@ -44,13 +49,14 @@ public class RcController {
             LOGGER.debug("list record failed:{}", rcListParam);
             CommonResult.failed(e.getMessage());
         }
+        logGenerator.log(request, "获取数据: 表格" + rcListParam.getName());
         return CommonResult.success(columns);
     }
 
     @ApiOperation("添加数据")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult addRc(@RequestBody RcAddParam rcAddParam) {
+    public CommonResult addRc(@RequestBody RcAddParam rcAddParam, HttpServletRequest request) {
         int count = 0;
         try {
             count = rcService.addRc(rcAddParam);
@@ -59,6 +65,7 @@ public class RcController {
             CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
+            logGenerator.log(request, "添加数据: 表格" + rcAddParam.getName());
             LOGGER.debug("add record success:{}", rcAddParam);
             return CommonResult.success(rcAddParam);
         } else {
@@ -70,7 +77,7 @@ public class RcController {
     @ApiOperation("更新数据")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateRc(@RequestBody RcUpdateParam rcUpdateParam) {
+    public CommonResult updateRc(@RequestBody RcUpdateParam rcUpdateParam, HttpServletRequest request) {
         int count = 0;
         try {
             count = rcService.updateRc(rcUpdateParam);
@@ -79,6 +86,7 @@ public class RcController {
             CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
+            logGenerator.log(request, "更新数据: " + rcUpdateParam.getName());
             LOGGER.debug("update record success:{}", rcUpdateParam);
             return CommonResult.success(rcUpdateParam);
         } else {
@@ -90,7 +98,7 @@ public class RcController {
     @ApiOperation("删除数据")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult deleteRc(@RequestBody RcDeleteParam rcDeleteParam) {
+    public CommonResult deleteRc(@RequestBody RcDeleteParam rcDeleteParam, HttpServletRequest request) {
         int count = 0;
         try {
             count = rcService.deleteRc(rcDeleteParam);
@@ -99,6 +107,7 @@ public class RcController {
             CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
+            logGenerator.log(request, "删除数据: " + rcDeleteParam.getName());
             LOGGER.debug("delete record success:{}", rcDeleteParam);
             return CommonResult.success(rcDeleteParam);
         } else {
