@@ -16,7 +16,6 @@ import java.sql.Statement;
 @Configuration
 public class DataSourceHelper {
   private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceHelper.class);
-
   @Value("${datasource.driver}")
   private String driver; // com.mysql.cj.jdbc.Driver
   @Value("${datasource.url}")
