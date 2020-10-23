@@ -15,7 +15,6 @@ import java.sql.Statement;
 
 @Configuration
 public class DataSourceHelper {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceHelper.class);
 
   @Value("${datasource.driver}")
