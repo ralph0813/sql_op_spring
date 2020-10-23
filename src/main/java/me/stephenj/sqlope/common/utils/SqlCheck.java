@@ -121,6 +121,10 @@ public class SqlCheck {
 
     public boolean checkConditions(List<ConditionCell> conditionCells) throws ConditionsException {
         String[] symbols = {"=", "!=", ">", "<", "<=", ">="};
+        Optional<List<ConditionCell>> conditionCellOptional = Optional.ofNullable(conditionCells);
+        if (!conditionCellOptional.isPresent()) {
+            return true;
+        }
         for (ConditionCell conditionCell: conditionCells) {
             if (conditionCell.getLogic() < 0 || conditionCell.getLogic() > 1) {
                 throw new ConditionsException("逻辑'AND'或者'OR'错误");
@@ -132,6 +136,17 @@ public class SqlCheck {
         return true;
     }
 
+    public boolean checkExcel(TbTemp tbTemp) throws DatabaseNotExistException {
+        Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbTemp.getId()));
+        if (!tbOptional.isPresent()) {
+            tbTemp.setName(null);
+        }
+        Optional<Db> dbOptional = Optional.ofNullable(dbMapper.selectByPrimaryKey(tbTemp.getDbId()));
+        if (!dbOptional.isPresent()) {
+            throw new DatabaseNotExistException("该数据库不存在");
+        }
+        return true;
+    }
 
 
 

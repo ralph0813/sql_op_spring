@@ -118,10 +118,10 @@ public class SqlGenerator {
     }
 
     public String listRc(RcListParam rcListParam) {
-        List<ConditionCell> conditions = rcListParam.getConditions();
+        Optional<List<ConditionCell>> conditionCells = Optional.ofNullable(rcListParam.getConditions());
         StringBuilder condition = new StringBuilder(" WHERE '1' = '1'");
-        if (!conditions.isEmpty()) {
-            for (ConditionCell conditionCell: conditions) {
+        if (conditionCells.isPresent()) {
+            for (ConditionCell conditionCell: conditionCells.get()) {
                 StringBuilder oneCase = new StringBuilder();
                 if (conditionCell.getLogic() == 0) {
                     oneCase.append(" AND");
