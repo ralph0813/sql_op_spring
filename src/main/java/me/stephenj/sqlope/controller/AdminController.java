@@ -9,10 +9,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ public class AdminController {
     @Autowired
     private LogGenerator logGenerator;
 
+    @PreAuthorize("hasAuthority('admin')")
     @ApiOperation(value = "用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
@@ -46,6 +49,18 @@ public class AdminController {
         }
         logGenerator.log(admin.getUsername(), "注册");
         return CommonResult.success(umsAdmin);
+    }
+
+    @ApiOperation(value = "更新密码")
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<Admin> register(@RequestParam String password, HttpServletRequest request) {
+        Admin admin = adminService.update(password, request);
+        if (admin == null) {
+            CommonResult.failed("更新秘密失败");
+        }
+        logGenerator.log(admin.getUsername(), "注册");
+        return CommonResult.success(admin);
     }
 
     @ApiOperation(value = "登录以后返回token")
