@@ -97,7 +97,6 @@ public class SqlGenerator {
                 dtTemp.getTbName(), dtTemp.getName(), dtTemp.getType());
     }
 
-    //FOREIGN KEY (`nid`) REFERENCES `mytb1` (`id`);
     public String createFk(DtTemp dtTemp) {
         return String.format("ALTER TABLE `%s` ADD CONSTRAINT ", dtTemp.getTbName()) + String.format("`%s_%s_fk` ",
                 dtTemp.getTbName(), dtTemp.getName()) +
