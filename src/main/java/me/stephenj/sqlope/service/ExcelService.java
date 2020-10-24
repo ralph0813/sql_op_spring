@@ -13,5 +13,5 @@ import java.sql.SQLException;
 public interface ExcelService {
     String exportExcel(TbTemp tbTemp, ServletOutputStream out) throws DatabaseNotExistException, SQLException, ConditionsException, TableNotExistException;
 
-    int importExcel(TbTemp tbTemp, MultipartFile file) throws DatabaseNotExistException, TableNotExistException, IOException;
+    int importExcel(MultipartFile file) throws DatabaseNotExistException, TableNotExistException, IOException;
 }

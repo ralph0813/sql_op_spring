@@ -1,5 +1,6 @@
 package me.stephenj.sqlope.controller;
 
+import cn.hutool.core.io.FileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -57,21 +58,20 @@ public class ExcelController {
     @ApiOperation("导入Excel")
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult importExcel(@RequestBody TbTemp tbTemp,
-                                    @RequestParam(value = "file")
+    public CommonResult importExcel(@RequestParam(value = "file")
                                     @ApiParam("Excel文件") MultipartFile file,
                                     HttpServletRequest request) {
         int count = 0;
         try {
-            count = excelService.importExcel(tbTemp, file);
+            count = excelService.importExcel(file);
         } catch (TableNotExistException | DatabaseNotExistException | IOException e) {
             LOGGER.error("import Excel failed:{}", e.getMessage());
             return CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
-            logGenerator.log(request, "给表格" + tbTemp.getName() + "导入Excel数据");
+            logGenerator.log(request, "给数据库" + FileUtil.mainName(file.getOriginalFilename()) + "导入Excel数据");
             LOGGER.info("import excel success");
-            return CommonResult.success(tbTemp);
+            return CommonResult.success(FileUtil.mainName(file.getOriginalFilename()));
         } else {
             LOGGER.error("import excel failed: 执行sql语句失败");
             return CommonResult.failed("import Excel failed: 执行sql语句失败");

@@ -136,7 +136,7 @@ public class SqlCheck {
         return true;
     }
 
-    public boolean checkExcel(TbTemp tbTemp) throws DatabaseNotExistException {
+    public boolean checkExportExcel(TbTemp tbTemp) throws DatabaseNotExistException {
         Optional<Tb> tbOptional = Optional.ofNullable(tbMapper.selectByPrimaryKey(tbTemp.getId()));
         if (!tbOptional.isPresent()) {
             tbTemp.setName(null);
@@ -147,6 +147,27 @@ public class SqlCheck {
         }
         return true;
     }
+
+    public boolean checkTbByName(TbTemp tbTemp) throws DatabaseNotExistException {
+        TbExample tbExample = new TbExample();
+        tbExample.createCriteria().andNameEqualTo(tbTemp.getName());
+        List<Tb> tbs = tbMapper.selectByExample(tbExample);
+        if (tbs.isEmpty()) {
+            return false;
+        }
+        tbTemp.setId(tbs.get(0).getId());
+        return true;
+    }
+
+    public boolean checkDbByName(TbTemp tbTemp) throws DatabaseNotExistException {
+        DbExample dbExample = new DbExample();
+        dbExample.createCriteria().andNameEqualTo(tbTemp.getDbName());
+        if (dbMapper.selectByExample(dbExample).isEmpty()) {
+            throw new DatabaseNotExistException("该数据库不存在");
+        }
+        return true;
+    }
+
 
 
 
