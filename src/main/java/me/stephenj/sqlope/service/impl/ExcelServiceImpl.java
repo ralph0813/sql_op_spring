@@ -2,13 +2,19 @@ package me.stephenj.sqlope.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import cn.hutool.poi.excel.sax.handler.RowHandler;
 import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
+import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlCheck;
+import me.stephenj.sqlope.common.utils.SqlGenerator;
+import me.stephenj.sqlope.controller.DbController;
 import me.stephenj.sqlope.domain.RcListParam;
 import me.stephenj.sqlope.domain.ResultCell;
 import me.stephenj.sqlope.domain.TbTemp;
@@ -21,13 +27,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ClassName ExcelServiceImpl.java
@@ -46,6 +53,11 @@ public class ExcelServiceImpl implements ExcelService {
     private String path;
     @Autowired
     private TbMapper tbMapper;
+    @Autowired
+    private SqlGenerator sqlGenerator;
+    @Autowired
+    private DBConnector dbConnector;
+
     @Override
     public String exportExcel(TbTemp tbTemp, ServletOutputStream out) throws DatabaseNotExistException, SQLException, ConditionsException, TableNotExistException {
         sqlCheck.checkExcel(tbTemp);
@@ -68,6 +80,20 @@ public class ExcelServiceImpl implements ExcelService {
         writer.close();
         IoUtil.close(out);
         return tbTemp.getDbName() + ".xls";
+    }
+
+    @Override
+    public int importExcel(TbTemp tbTemp, MultipartFile file) throws DatabaseNotExistException, TableNotExistException, IOException {
+        sqlCheck.checkRc(tbTemp);
+        Optional<MultipartFile> fileOptional = Optional.ofNullable(file);
+        if (fileOptional.isPresent()) {
+            ExcelReader reader = ExcelUtil.getReader(file.getInputStream(), 0);
+            List<Map<String,Object>> readAll = reader.readAll();
+            String importExcelSql = sqlGenerator.importExcel(readAll, tbTemp);
+            return dbConnector.execute(tbTemp.getDbName(), importExcelSql);
+        } else {
+            throw new FileNotFoundException("没有上传文件");
+        }
     }
 
     private void writeExcel(ExcelWriter writer, TbTemp tbTemp) throws SQLException, DatabaseNotExistException, ConditionsException, TableNotExistException {

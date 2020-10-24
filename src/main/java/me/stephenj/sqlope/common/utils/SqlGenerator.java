@@ -8,8 +8,8 @@ import me.stephenj.sqlope.mbg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -196,6 +196,39 @@ public class SqlGenerator {
             }
         }
         result.append(conditionValues);
+        result.append(";");
+        return result.toString();
+    }
+
+    public String importExcel(List<Map<String, Object>> excel, TbTemp tbTemp) {
+        StringBuilder result = new StringBuilder(String.format("INSERT INTO `%s` (",
+                tbTemp.getName()));
+        StringBuilder names = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        List<String> keys = new ArrayList<>(excel.get(0).keySet());
+        for (String key : keys) {
+            names.append(String.format("`%s`", key));
+            if (keys.indexOf(key) < keys.size() - 1) {
+                names.append(", ");
+            }
+        }
+        for (Map<String, Object> row: excel) {
+            values.append("( ");
+            List<Object> v = new ArrayList<>(row.values());
+            for (Object value : v) {
+                values.append(String.format("`%s`", value));
+                if (v.indexOf(value) < v.size() - 1) {
+                    values.append(", ");
+                }
+            }
+            values.append(" )");
+            if (excel.indexOf(row) < excel.size() - 1) {
+                values.append(", ");
+            }
+        }
+        result.append(names);
+        result.append(") VALUE ");
+        result.append(values);
         result.append(";");
         return result.toString();
     }
