@@ -4,12 +4,17 @@ import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
 import me.stephenj.sqlope.mbg.mapper.TbMapper;
-import me.stephenj.sqlope.mbg.model.*;
+import me.stephenj.sqlope.mbg.model.Dt;
+import me.stephenj.sqlope.mbg.model.DtExample;
+import me.stephenj.sqlope.mbg.model.Tb;
+import me.stephenj.sqlope.mbg.model.TbExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -216,7 +221,7 @@ public class SqlGenerator {
             values.append("( ");
             List<Object> v = new ArrayList<>(row.values());
             for (Object value : v) {
-                values.append(String.format("`%s`", value));
+                values.append(String.format("'%s'", value));
                 if (v.indexOf(value) < v.size() - 1) {
                     values.append(", ");
                 }

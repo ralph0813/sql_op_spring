@@ -7,14 +7,12 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import cn.hutool.poi.excel.sax.handler.RowHandler;
 import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlCheck;
 import me.stephenj.sqlope.common.utils.SqlGenerator;
-import me.stephenj.sqlope.controller.DbController;
 import me.stephenj.sqlope.domain.RcListParam;
 import me.stephenj.sqlope.domain.ResultCell;
 import me.stephenj.sqlope.domain.TbTemp;
@@ -30,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -60,7 +57,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Override
     public String exportExcel(TbTemp tbTemp, ServletOutputStream out) throws DatabaseNotExistException, SQLException, ConditionsException, TableNotExistException {
-        sqlCheck.checkExcel(tbTemp);
+        sqlCheck.checkExportExcel(tbTemp);
         ExcelWriter writer = ExcelUtil.getWriter(path + "/" + DateUtil.format(DateUtil.date(), "yyyyMMdd-HHmmss") + "/" + tbTemp.getDbName() + ".xls");
         List<Tb> tbs;
         if (tbTemp.getName() == null) {
@@ -83,17 +80,38 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    public int importExcel(TbTemp tbTemp, MultipartFile file) throws DatabaseNotExistException, TableNotExistException, IOException {
-        sqlCheck.checkRc(tbTemp);
+    public int importExcel(MultipartFile file) throws DatabaseNotExistException, IOException {
         Optional<MultipartFile> fileOptional = Optional.ofNullable(file);
         if (fileOptional.isPresent()) {
-            ExcelReader reader = ExcelUtil.getReader(file.getInputStream(), 0);
-            List<Map<String,Object>> readAll = reader.readAll();
-            String importExcelSql = sqlGenerator.importExcel(readAll, tbTemp);
-            return dbConnector.execute(tbTemp.getDbName(), importExcelSql);
+            TbTemp tbTemp = new TbTemp();
+            String name = FileUtil.mainName(fileOptional.get().getOriginalFilename());
+            tbTemp.setDbName(name);
+            sqlCheck.checkDbByName(tbTemp);
+            ExcelReader reader = ExcelUtil.getReader(file.getInputStream());
+            List<String> sheets = reader.getSheetNames();
+            for (String sheet: sheets) {
+                reader.setSheet(sheet);
+                tbTemp.setName(sheet);
+                if (sqlCheck.checkTbByName(tbTemp)) {
+                    if (readExcel(reader, tbTemp) == 0) {
+                        return 0;
+                    }
+                }
+            }
+            return 1;
         } else {
             throw new FileNotFoundException("没有上传文件");
         }
+    }
+
+    private int readExcel(ExcelReader reader, TbTemp tbTemp) {
+        int columnCount = reader.getColumnCount();
+        if (columnCount > 0) {
+            List<Map<String, Object>> readAll = reader.readAll();
+            String importExcelSql = sqlGenerator.importExcel(readAll, tbTemp);
+            return dbConnector.execute(tbTemp.getDbName(), importExcelSql);
+        }
+        return 1;
     }
 
     private void writeExcel(ExcelWriter writer, TbTemp tbTemp) throws SQLException, DatabaseNotExistException, ConditionsException, TableNotExistException {
@@ -110,11 +128,11 @@ public class ExcelServiceImpl implements ExcelService {
             rows.add(row);
         }
         if (rows.size() > 0) {
-            if (rows.get(0).size() > 1) {
-                writer.merge(rows.get(0).size() - 1, tbTemp.getName());
-            } else {
-                writer.writeCellValue(0, 0, tbTemp.getName());
-            }
+//            if (rows.get(0).size() > 1) {
+//                writer.merge(rows.get(0).size() - 1, tbTemp.getName());
+//            } else {
+//                writer.writeCellValue(0, 0, tbTemp.getName());
+//            }
             writer.write(rows, true);
         }
     }
