@@ -74,7 +74,7 @@ public class SqlGenerator {
 //                result.append(", ");
 //            }
 //        }
-        List<String> names = tbDomain.getDts().stream().map(dtDomain -> dtDomain.getName()).collect(Collectors.toList());
+        List<String> names = tbDomain.getDts().stream().map(DtDomain::getName).collect(Collectors.toList());
         if (tbDomain.getPrimaryKey() != null && names.contains(tbDomain.getPrimaryKey())) {
             result.append(String.format(", PRIMARY KEY (`%s`)", tbDomain.getPrimaryKey()));
         }
@@ -99,12 +99,10 @@ public class SqlGenerator {
 
     //FOREIGN KEY (`nid`) REFERENCES `mytb1` (`id`);
     public String createFk(DtTemp dtTemp) {
-        StringBuilder result = new StringBuilder(String.format("ALTER TABLE `%s` ADD CONSTRAINT ", dtTemp.getTbName()));
-        result.append(String.format("`%s_%s_fk` ",
-                dtTemp.getTbName(), dtTemp.getName()));
-        result.append(String.format("FOREIGN KEY (`%s`) REFERENCES `%s` (`%s`);",
-                dtTemp.getName(), dtTemp.getTgTb(), dtTemp.getTgDt()));
-        return result.toString();
+        return String.format("ALTER TABLE `%s` ADD CONSTRAINT ", dtTemp.getTbName()) + String.format("`%s_%s_fk` ",
+                dtTemp.getTbName(), dtTemp.getName()) +
+                String.format("FOREIGN KEY (`%s`) REFERENCES `%s` (`%s`);",
+                        dtTemp.getName(), dtTemp.getTgTb(), dtTemp.getTgDt());
     }
 
     public String dropDt(DtTemp dtTemp) {
