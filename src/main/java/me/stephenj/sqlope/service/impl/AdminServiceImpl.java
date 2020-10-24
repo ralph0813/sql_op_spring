@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class AdminServiceImpl implements AdminService {
     private String tokenHead;
     @Autowired
     private AdminMapper adminMapper;
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
 
     @Override
     public Admin getAdminByUsername(String username) {
@@ -52,23 +55,37 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Admin register(Admin umsAdminParam) {
-        Admin umsAdmin = new Admin();
-        BeanUtils.copyProperties(umsAdminParam, umsAdmin);
-        umsAdmin.setCreateTime(new Date());
-        umsAdmin.setStatus(1);
+    public Admin update(String password, HttpServletRequest request) {
+        String authHeader = request.getHeader(this.tokenHeader);
+        if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
+            String authToken = authHeader.substring(this.tokenHead.length());// The part after "Bearer "
+            String username = jwtTokenUtil.getUserNameFromToken(authToken);
+            Admin admin = getAdminByUsername(username);
+            admin.setPassword(passwordEncoder.encode(password));
+            adminMapper.updateByPrimaryKey(admin);
+            return admin;
+        }
+        return null;
+    }
+
+    @Override
+    public Admin register(Admin adminParam) {
+        Admin admin = new Admin();
+        BeanUtils.copyProperties(adminParam, admin);
+        admin.setCreateTime(new Date());
+        admin.setStatus(1);
         //查询是否有相同用户名的用户
         AdminExample example = new AdminExample();
-        example.createCriteria().andUsernameEqualTo(umsAdmin.getUsername());
-        List<Admin> umsAdminList = adminMapper.selectByExample(example);
-        if (umsAdminList.size() > 0) {
+        example.createCriteria().andUsernameEqualTo(admin.getUsername());
+        List<Admin> adminList = adminMapper.selectByExample(example);
+        if (adminList.size() > 0) {
             return null;
         }
         //将密码进行加密操作
-        String encodePassword = passwordEncoder.encode(umsAdmin.getPassword());
-        umsAdmin.setPassword(encodePassword);
-        adminMapper.insert(umsAdmin);
-        return umsAdmin;
+        String encodePassword = passwordEncoder.encode(admin.getPassword());
+        admin.setPassword(encodePassword);
+        adminMapper.insert(admin);
+        return admin;
     }
 
     @Override

@@ -2,6 +2,8 @@ package me.stephenj.sqlope.service;
 
 import me.stephenj.sqlope.mbg.model.Admin;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @ClassName AdminService.java
  * @Description
@@ -15,10 +17,12 @@ public interface AdminService {
      */
     Admin getAdminByUsername(String username);
 
+    Admin update(String password, HttpServletRequest request);
+
     /**
      * 注册功能
      */
-    Admin register(Admin umsAdminParam);
+    Admin register(Admin admin);
 
     /**
      * 登录功能
