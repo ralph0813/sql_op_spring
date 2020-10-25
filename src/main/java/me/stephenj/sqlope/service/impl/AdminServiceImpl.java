@@ -1,6 +1,7 @@
 package me.stephenj.sqlope.service.impl;
 
 import me.stephenj.sqlope.common.utils.JwtTokenUtil;
+import me.stephenj.sqlope.domain.AdminInfo;
 import me.stephenj.sqlope.mbg.mapper.AdminMapper;
 import me.stephenj.sqlope.mbg.model.Admin;
 import me.stephenj.sqlope.mbg.model.AdminExample;
@@ -104,6 +105,20 @@ public class AdminServiceImpl implements AdminService {
         }
 
         return token;
+    }
+
+    @Override
+    public AdminInfo info(HttpServletRequest request) {
+        AdminInfo adminInfo = new AdminInfo();
+        String authHeader = request.getHeader(this.tokenHeader);
+        if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
+            String authToken = authHeader.substring(this.tokenHead.length());// The part after "Bearer "
+            String username = jwtTokenUtil.getUserNameFromToken(authToken);
+            Admin admin = getAdminByUsername(username);
+            BeanUtils.copyProperties(admin, adminInfo);
+            return adminInfo;
+        }
+        return null;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package me.stephenj.sqlope.service;
 
+import me.stephenj.sqlope.domain.AdminInfo;
 import me.stephenj.sqlope.mbg.model.Admin;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,8 @@ public interface AdminService {
      * @return 生成的JWT的token
      */
     String login(String username, String password);
+
+    AdminInfo info(HttpServletRequest request);
 
     String getRole(int adminId);
 }

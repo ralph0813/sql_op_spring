@@ -2,6 +2,7 @@ package me.stephenj.sqlope.controller;
 
 import me.stephenj.sqlope.common.api.CommonResult;
 import me.stephenj.sqlope.common.utils.LogGenerator;
+import me.stephenj.sqlope.domain.AdminInfo;
 import me.stephenj.sqlope.domain.AdminLoginParam;
 import me.stephenj.sqlope.mbg.model.Admin;
 import me.stephenj.sqlope.service.AdminService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @ClassName AdminController.java
@@ -78,7 +80,19 @@ public class AdminController {
         return CommonResult.success(tokenMap);
     }
 
-    @ApiOperation("获取用户角色（包括+-权限）")
+    @ApiOperation(value = "获取用户信息")
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult info(HttpServletRequest request) {
+        Optional<AdminInfo> adminInfo = Optional.ofNullable(adminService.info(request));
+        if (adminInfo.isPresent()) {
+            return CommonResult.success(adminInfo.get());
+        } else {
+            return CommonResult.failed("用户未登录或Token已过期");
+        }
+    }
+
+    @ApiOperation("获取用户角色")
     @RequestMapping(value = "/permission/{adminId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getPermissionList(@PathVariable int adminId) {
