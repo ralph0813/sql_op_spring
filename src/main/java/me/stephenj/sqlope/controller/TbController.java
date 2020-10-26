@@ -3,9 +3,7 @@ package me.stephenj.sqlope.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import me.stephenj.sqlope.Exception.ForeignKeyExistException;
-import me.stephenj.sqlope.Exception.TableExistException;
-import me.stephenj.sqlope.Exception.TableNotExistException;
+import me.stephenj.sqlope.Exception.*;
 import me.stephenj.sqlope.common.api.CommonResult;
 import me.stephenj.sqlope.common.utils.LogGenerator;
 import me.stephenj.sqlope.domain.TbDomain;
@@ -54,23 +52,20 @@ public class TbController {
         int count = 0;
         try {
             count = tbService.createTb(tbDomain);
-        } catch (TableExistException e) {
+        } catch (TableExistException | DatabaseNotExistException | ParameterLackException e) {
             LOGGER.debug("create table failed:{}", tbDomain.getName());
             return CommonResult.failed(e.getMessage());
         }
         if (count == 0) {
             LOGGER.debug("create table failed:{}", tbDomain.getName());
-            return CommonResult.failed("建表失败");
-        } else if (count == -1) {
-            LOGGER.debug("create table failed:{}", tbDomain.getName());
-            return CommonResult.failed("没有目标表格");
-        } else if (count == -2) {
-            LOGGER.debug("create table failed:{}", tbDomain.getName());
-            return CommonResult.failed("表格没有");
-        } else {
+            return CommonResult.failed("建表失败，语句执行异常");
+        } else if (count == 1) {
             logGenerator.log(request, "创建数据表: " + tbDomain.getName());
             LOGGER.debug("create table success:{}", tbDomain.getName());
             return CommonResult.success(tbDomain.getName());
+        } else {
+            LOGGER.debug("create table failed:{}", tbDomain.getName());
+            return CommonResult.failed("建表失败，其他原因");
         }
     }
 

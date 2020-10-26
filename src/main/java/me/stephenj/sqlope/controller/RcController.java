@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
+import me.stephenj.sqlope.Exception.ParameterLackException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.api.CommonResult;
 import me.stephenj.sqlope.common.utils.LogGenerator;
@@ -47,7 +48,7 @@ public class RcController {
              columns = rcService.listRcs(rcListParam);
         } catch (DatabaseNotExistException | TableNotExistException | SQLException | ConditionsException e) {
             LOGGER.debug("list record failed:{}", rcListParam);
-            CommonResult.failed(e.getMessage());
+            return CommonResult.failed(e.getMessage());
         }
         logGenerator.log(request, "获取数据: 表格" + rcListParam.getName());
         return CommonResult.success(columns);
@@ -62,7 +63,7 @@ public class RcController {
             count = rcService.addRc(rcAddParam);
         } catch (DatabaseNotExistException | TableNotExistException e) {
             LOGGER.debug("add data failed:{}", rcAddParam);
-            CommonResult.failed(e.getMessage());
+            return CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
             logGenerator.log(request, "添加数据: 表格" + rcAddParam.getName());
@@ -81,9 +82,9 @@ public class RcController {
         int count = 0;
         try {
             count = rcService.updateRc(rcUpdateParam);
-        } catch (DatabaseNotExistException | TableNotExistException e) {
+        } catch (DatabaseNotExistException | TableNotExistException | ParameterLackException e) {
             LOGGER.debug("update record failed:{}", rcUpdateParam);
-            CommonResult.failed(e.getMessage());
+            return CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
             logGenerator.log(request, "更新数据: " + rcUpdateParam.getName());
@@ -102,9 +103,9 @@ public class RcController {
         int count = 0;
         try {
             count = rcService.deleteRc(rcDeleteParam);
-        } catch (TableNotExistException | DatabaseNotExistException e) {
+        } catch (TableNotExistException | DatabaseNotExistException | ParameterLackException e) {
             LOGGER.debug("delete record failed:{}", rcDeleteParam);
-            CommonResult.failed(e.getMessage());
+            return CommonResult.failed(e.getMessage());
         }
         if (count == 1) {
             logGenerator.log(request, "删除数据: " + rcDeleteParam.getName());

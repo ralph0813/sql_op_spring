@@ -1,5 +1,6 @@
 package me.stephenj.sqlope.service.impl;
 
+import me.stephenj.sqlope.Exception.UserExistException;
 import me.stephenj.sqlope.common.utils.JwtTokenUtil;
 import me.stephenj.sqlope.domain.AdminInfo;
 import me.stephenj.sqlope.mbg.mapper.AdminMapper;
@@ -70,7 +71,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Admin register(Admin adminParam) {
+    public Admin register(Admin adminParam) throws UserExistException {
         Admin admin = new Admin();
         BeanUtils.copyProperties(adminParam, admin);
         admin.setCreateTime(new Date());
@@ -80,7 +81,7 @@ public class AdminServiceImpl implements AdminService {
         example.createCriteria().andUsernameEqualTo(admin.getUsername());
         List<Admin> adminList = adminMapper.selectByExample(example);
         if (adminList.size() > 0) {
-            return null;
+            throw new UserExistException("已存在同名用户");
         }
         //将密码进行加密操作
         String encodePassword = passwordEncoder.encode(admin.getPassword());

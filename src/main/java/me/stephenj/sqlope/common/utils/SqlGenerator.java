@@ -1,5 +1,6 @@
 package me.stephenj.sqlope.common.utils;
 
+import me.stephenj.sqlope.Exception.ParameterLackException;
 import me.stephenj.sqlope.domain.*;
 import me.stephenj.sqlope.mbg.mapper.DbMapper;
 import me.stephenj.sqlope.mbg.mapper.DtMapper;
@@ -28,12 +29,12 @@ public class SqlGenerator {
 
     private static String head = "CREATE TABLE IF NOT EXISTS";
     private static String tail = "ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;";
-    public String createTb(TbDomain tbDomain) throws NullPointerException{
+    public String createTb(TbDomain tbDomain) throws NullPointerException, ParameterLackException {
         StringBuilder foreignKeyStr = new StringBuilder("");
         StringBuilder result = new StringBuilder(String.format(head + " `%s` (", tbDomain.getName()));
         Optional<List<DtDomain>> dtsOp = Optional.ofNullable(tbDomain.getDts());
         if (!dtsOp.isPresent()) {
-            return "-2";
+            throw new ParameterLackException("缺少参数: 表的列名");
         }
         dtsOp.ifPresent(dts -> {
             dts.stream().forEach(dtDomain -> {
@@ -160,7 +161,7 @@ public class SqlGenerator {
         return result.toString();
     }
 
-    public String updateRc(RcUpdateParam rcUpdateParam) {
+    public String updateRc(RcUpdateParam rcUpdateParam) throws ParameterLackException {
         StringBuilder result = new StringBuilder(String.format("UPDATE `%s` SET ",
                 rcUpdateParam.getName()));
         StringBuilder values = new StringBuilder();
@@ -173,6 +174,10 @@ public class SqlGenerator {
             }
         }
         List<ResultCell> conditions = rcUpdateParam.getConditions();
+        Optional<List<ResultCell>> conditionOptional = Optional.ofNullable(rcUpdateParam.getConditions());
+        if (!conditionOptional.isPresent()) {
+            throw new ParameterLackException("缺少参数：更新记录时需要有条件语句");
+        }
         for (ResultCell resultCell: conditions) {
             conditionValues.append(String.format("`%s` = '%s'", resultCell.getName(), resultCell.getValue()));
             if (conditions.indexOf(resultCell) < conditions.size() - 1) {
@@ -186,11 +191,15 @@ public class SqlGenerator {
         return result.toString();
     }
 
-    public String deleteRc(RcDeleteParam rcDeleteParam) {
+    public String deleteRc(RcDeleteParam rcDeleteParam) throws ParameterLackException {
         StringBuilder result = new StringBuilder(String.format("DELETE FROM `%s` WHERE ",
                 rcDeleteParam.getName()));
         StringBuilder conditionValues = new StringBuilder();
         List<ResultCell> conditions = rcDeleteParam.getConditions();
+        Optional<List<ResultCell>> conditionOptional = Optional.ofNullable(rcDeleteParam.getConditions());
+        if (!conditionOptional.isPresent()) {
+            throw new ParameterLackException("缺少参数：删除记录时需要有条件语句");
+        }
         for (ResultCell resultCell: conditions) {
             conditionValues.append(String.format("`%s` = '%s'", resultCell.getName(), resultCell.getValue()));
             if (conditions.indexOf(resultCell) < conditions.size() - 1) {

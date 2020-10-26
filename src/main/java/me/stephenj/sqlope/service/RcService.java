@@ -2,6 +2,7 @@ package me.stephenj.sqlope.service;
 
 import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
+import me.stephenj.sqlope.Exception.ParameterLackException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.domain.*;
 
@@ -20,7 +21,7 @@ public interface RcService {
 
     int addRc(RcAddParam rcAddParam) throws DatabaseNotExistException, TableNotExistException;
 
-    int updateRc(RcUpdateParam rcUpdateParam) throws DatabaseNotExistException, TableNotExistException;
+    int updateRc(RcUpdateParam rcUpdateParam) throws DatabaseNotExistException, TableNotExistException, ParameterLackException;
 
-    int deleteRc(RcDeleteParam rcDeleteParam) throws DatabaseNotExistException, TableNotExistException;
+    int deleteRc(RcDeleteParam rcDeleteParam) throws DatabaseNotExistException, TableNotExistException, ParameterLackException;
 }
