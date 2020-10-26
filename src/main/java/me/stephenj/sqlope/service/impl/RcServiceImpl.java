@@ -2,6 +2,7 @@ package me.stephenj.sqlope.service.impl;
 
 import me.stephenj.sqlope.Exception.ConditionsException;
 import me.stephenj.sqlope.Exception.DatabaseNotExistException;
+import me.stephenj.sqlope.Exception.ParameterLackException;
 import me.stephenj.sqlope.Exception.TableNotExistException;
 import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlCheck;
@@ -53,18 +54,17 @@ public class RcServiceImpl implements RcService {
     }
 
     @Override
-    public int updateRc(RcUpdateParam rcUpdateParam) throws DatabaseNotExistException, TableNotExistException {
+    public int updateRc(RcUpdateParam rcUpdateParam) throws DatabaseNotExistException, TableNotExistException, ParameterLackException {
         TbTemp tbTemp = new TbTemp();
         BeanUtils.copyProperties(rcUpdateParam, tbTemp);
-        if (sqlCheck.checkRc(tbTemp)) {
-            String updateRcSql = sqlGenerator.updateRc(rcUpdateParam);
-            return dbConnector.execute(rcUpdateParam.getDbName(), updateRcSql);
-        }
-        return 0;
+        sqlCheck.checkRc(tbTemp);
+        sqlCheck.checkUpdateRc(rcUpdateParam);
+        String updateRcSql = sqlGenerator.updateRc(rcUpdateParam);
+        return dbConnector.execute(rcUpdateParam.getDbName(), updateRcSql);
     }
 
     @Override
-    public int deleteRc(RcDeleteParam rcDeleteParam) throws DatabaseNotExistException, TableNotExistException {
+    public int deleteRc(RcDeleteParam rcDeleteParam) throws DatabaseNotExistException, TableNotExistException, ParameterLackException {
         TbTemp tbTemp = new TbTemp();
         BeanUtils.copyProperties(rcDeleteParam, tbTemp);
         if (sqlCheck.checkRc(tbTemp)) {

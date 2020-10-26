@@ -1,8 +1,6 @@
 package me.stephenj.sqlope.service.impl;
 
-import me.stephenj.sqlope.Exception.ForeignKeyExistException;
-import me.stephenj.sqlope.Exception.TableExistException;
-import me.stephenj.sqlope.Exception.TableNotExistException;
+import me.stephenj.sqlope.Exception.*;
 import me.stephenj.sqlope.common.utils.DBConnector;
 import me.stephenj.sqlope.common.utils.SqlGenerator;
 import me.stephenj.sqlope.common.utils.SqlRegistrator;
@@ -64,23 +62,18 @@ public class TbServiceImpl implements TbService {
     }
 
     @Override
-    public int createTb(TbDomain tbDomain) throws TableExistException {
+    public int createTb(TbDomain tbDomain) throws TableExistException, DatabaseNotExistException, ParameterLackException {
         DbExample dbExample = new DbExample();
         dbExample.createCriteria().andNameEqualTo(tbDomain.getDbName());
         List<Db> dbs = dbMapper.selectByExample(dbExample);
         if (dbs.size() <= 0) {
+            throw new DatabaseNotExistException("不存在该数据库: " + tbDomain.getDbName());
+        }
+        String createTbSql = sqlGenerator.createTb(tbDomain);
+        if (dbConnector.execute(tbDomain.getDbName(), createTbSql) == 0) {
             return 0;
         }
-        try {
-            String createTbSql = sqlGenerator.createTb(tbDomain);
-            if (createTbSql.equals("-2")) {
-                return -2;
-            }
-            dbConnector.execute(tbDomain.getDbName(), createTbSql);
 
-        } catch (NullPointerException e){
-            return -1;
-        }
         sqlRegistrator.createTb(tbDomain);
 
 //        try {

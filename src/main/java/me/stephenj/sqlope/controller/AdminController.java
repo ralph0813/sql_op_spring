@@ -1,5 +1,6 @@
 package me.stephenj.sqlope.controller;
 
+import me.stephenj.sqlope.Exception.UserExistException;
 import me.stephenj.sqlope.common.api.CommonResult;
 import me.stephenj.sqlope.common.utils.LogGenerator;
 import me.stephenj.sqlope.domain.AdminInfo;
@@ -45,12 +46,13 @@ public class AdminController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<Admin> register(@RequestBody Admin admin, BindingResult result) {
-        Admin umsAdmin = adminService.register(admin);
-        if (umsAdmin == null) {
-            CommonResult.failed();
+        try {
+            Admin AdminInfo = adminService.register(admin);
+            logGenerator.log(admin.getUsername(), "注册");
+            return CommonResult.success(AdminInfo);
+        } catch (UserExistException e) {
+            return CommonResult.failed(e.getMessage());
         }
-        logGenerator.log(admin.getUsername(), "注册");
-        return CommonResult.success(umsAdmin);
     }
 
     @ApiOperation(value = "更新密码")
@@ -59,7 +61,7 @@ public class AdminController {
     public CommonResult<Admin> register(@RequestParam String password, HttpServletRequest request) {
         Admin admin = adminService.update(password, request);
         if (admin == null) {
-            CommonResult.failed("更新秘密失败");
+            return CommonResult.failed("更新秘密失败");
         }
         logGenerator.log(admin.getUsername(), "注册");
         return CommonResult.success(admin);

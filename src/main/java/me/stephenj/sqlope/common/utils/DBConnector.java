@@ -36,15 +36,20 @@ public class DBConnector {
     @Value("${datasource.password}")
     private String password;
 
+    public Connection prepare(String dbName) throws ClassNotFoundException, URISyntaxException, SQLException {
+        Class.forName(driver);
+        URI uri = new URI(url.replace("jdbc:", ""));
+        String host = uri.getHost();
+        int port = uri.getPort();
+        String path = uri.getPath();
+        return (Connection) DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false", username, password);
+    }
+
     public int execute(String dbName, String sqlStatement) {
         try{
-            Class.forName(driver);
-            URI uri = new URI(url.replace("jdbc:", ""));
-            String host = uri.getHost();
-            int port = uri.getPort();
-            String path = uri.getPath();
-            Connection connection = (Connection) DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false", username, password);
+            Connection connection = prepare(dbName);
             Statement statement = connection.createStatement();
+            LOGGER.info("准备执行语句: #" + sqlStatement + "#");
             statement.executeUpdate(sqlStatement);
             statement.close();
             connection.close();
@@ -62,16 +67,12 @@ public class DBConnector {
     }
 
     public List<List<ResultCell>> query(String dbName, String sqlStatement) {
-        ResultSet resultSet = null;
-        List<List<ResultCell>> columns = null;
+        ResultSet resultSet;
+        List<List<ResultCell>> columns;
         try{
-            Class.forName(driver);
-            URI uri = new URI(url.replace("jdbc:", ""));
-            String host = uri.getHost();
-            int port = uri.getPort();
-            String path = uri.getPath();
-            Connection connection = (Connection) DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false", username, password);
+            Connection connection = prepare(dbName);
             Statement statement = connection.createStatement();
+            LOGGER.info("准备执行查询语句: #" + sqlStatement + "#");
             resultSet = statement.executeQuery(sqlStatement);
             columns = resultSetLoad.load(resultSet);
             statement.close();

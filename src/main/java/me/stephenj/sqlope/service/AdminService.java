@@ -1,5 +1,6 @@
 package me.stephenj.sqlope.service;
 
+import me.stephenj.sqlope.Exception.UserExistException;
 import me.stephenj.sqlope.domain.AdminInfo;
 import me.stephenj.sqlope.mbg.model.Admin;
 
@@ -23,7 +24,7 @@ public interface AdminService {
     /**
      * 注册功能
      */
-    Admin register(Admin admin);
+    Admin register(Admin admin) throws UserExistException;
 
     /**
      * 登录功能

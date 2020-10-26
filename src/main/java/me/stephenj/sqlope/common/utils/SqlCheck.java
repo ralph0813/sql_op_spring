@@ -119,6 +119,14 @@ public class SqlCheck {
         return true;
     }
 
+    public boolean checkUpdateRc(RcUpdateParam rcUpdateParam) throws ParameterLackException {
+        Optional<List<ResultCell>> conditionOptional = Optional.ofNullable(rcUpdateParam.getConditions());
+        if (!conditionOptional.isPresent() || conditionOptional.get().isEmpty()) {
+            throw new ParameterLackException("缺少参数：更新记录时需要有条件语句");
+        }
+        return true;
+    }
+
     public boolean checkConditions(List<ConditionCell> conditionCells) throws ConditionsException {
         String[] symbols = {"=", "!=", ">", "<", "<=", ">="};
         Optional<List<ConditionCell>> conditionCellOptional = Optional.ofNullable(conditionCells);

@@ -11,6 +11,10 @@ jwt:
   tokenHead: Bearer  #JWT负载中拿到开头
 file:
   path: /Users/zhangruntian/Downloads
+
+logging:
+  file:
+    name: src/main/resources/sqlope.log
 #mybatis:
 #  mapper-locations: classpath*:me/stephenj/sqlope/dao/*.xml
 #  type-aliases-package: me.stephenj.sqlope.dao
